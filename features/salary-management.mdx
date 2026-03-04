@@ -1,0 +1,459 @@
+---
+title: Salary Management
+description: Manage staff salary records, compensation amounts, and employment types
+---
+
+The Salary Management system tracks compensation information for teaching staff, including salary amounts and employment status (part-time or full-time).
+
+## Overview
+
+Salary records maintain financial information for teachers, linking compensation data to teacher profiles and tracking whether staff work part-time or full-time.
+
+<Card title="Key Features" icon="money-bill-wave">
+  - Record teacher salary information
+  - Track part-time vs. full-time employment
+  - Link salaries to teacher profiles
+  - View all salary records in a centralized table
+  - Update compensation amounts
+  - Manage payroll data efficiently
+</Card>
+
+## Salary Information Fields
+
+The system maintains the following information for each salary record:
+
+<ParamField path="Salary_ID" type="number" required>
+  Unique salary record identifier (auto-generated)
+</ParamField>
+
+<ParamField path="Teacher_ID" type="text" required>
+  Reference to the teacher receiving this salary (foreign key to Teacher table)
+</ParamField>
+
+<ParamField path="salary_amount" type="text" required>
+  The salary amount or compensation value
+</ParamField>
+
+<ParamField path="workingTimes" type="select" required>
+  Employment type: Part-Time or Full-Time
+</ParamField>
+
+## User Workflows
+
+<Tabs>
+  <Tab title="Add Salary">
+    ### Creating a Salary Record
+
+    To add salary information for a teacher:
+
+    1. Navigate to **Add** > **Salary** in the main menu
+    2. Complete the salary information form:
+
+    ```html
+    <form method="post" action="AddSalary.php">
+        <label for="Teacher_ID">Teacher ID:</label>
+        <input required type="text" name="Teacher_ID"><br /><br />
+        
+        <label for="salary_amount">Salary amount:</label>
+        <input required type="text" name="salary_amount"><br><br>
+        
+        <label for="workingTimes">Select working type: </label>
+        <select required id="workingTimes" name="workingTimes">
+            <option value="partTime">Part-Time</option>
+            <option value="fullTime">Full-Time</option>
+        </select> 
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    3. Click **Submit** to create the salary record
+
+    <Note>
+      Ensure the Teacher ID exists in the system before creating a salary record. You can verify Teacher IDs in the View > Teacher section.
+    </Note>
+
+  </Tab>
+
+  <Tab title="View Salaries">
+    ### Viewing All Salary Records
+
+    To access the complete salary information:
+
+    1. Click **View** > **Salary** in the navigation
+    2. Review the salary table
+
+    The salary table displays:
+
+    | Column | Width | Description |
+    |--------|-------|-------------|
+    | Salary_ID | 150px | Unique record ID |
+    | Teacher_ID | 250px | Linked teacher |
+    | salary_amount | 170px | Compensation amount |
+    | workingTimes | 90px | Part-Time or Full-Time |
+
+    **Database Query:**
+    ```sql
+    SELECT Salary_ID, Teacher_ID, salary_amount, workingTimes
+    FROM Salary
+    ```
+
+    <Warning>
+      Salary information is sensitive financial data. Ensure only authorized personnel (administrators, payroll staff) have access to this information.
+    </Warning>
+
+  </Tab>
+
+  <Tab title="Update Salary">
+    ### Updating Salary Information
+
+    To modify salary records:
+
+    1. Navigate to **Uptade** > **Salary**
+    2. Enter the Salary ID and updated information
+    3. Submit the changes
+
+    Common updates include:
+    - Annual salary increases
+    - Changing employment status (part-time to full-time)
+    - Correcting salary amounts
+    - Adjusting for promotions
+
+    <Info>
+      Document the reason and approval for salary changes. Consider maintaining a change log or audit trail for compliance purposes.
+    </Info>
+
+  </Tab>
+
+  <Tab title="Delete Salary">
+    ### Removing a Salary Record
+
+    To delete a salary record:
+
+    1. Go to **Delete** > **Salary**
+    2. Enter the Salary ID
+    3. Confirm deletion
+
+    <Warning>
+      Consider archiving salary records instead of deleting them for historical payroll tracking and audit compliance.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Employment Types
+
+<CardGroup cols={2}>
+  <Card title="Part-Time" icon="clock">
+    **Part-Time Employment (partTime)**
+    
+    Characteristics:
+    - Works fewer than standard full-time hours
+    - May teach specific subjects or periods
+    - Salary typically calculated hourly or per class
+    - May have limited benefits
+    - Flexible schedule
+    
+    Common scenarios:
+    - Subject specialists teaching a few classes
+    - Retired teachers returning part-time
+    - Teachers sharing positions
+    - Substitute or relief teachers
+  </Card>
+
+  <Card title="Full-Time" icon="briefcase">
+    **Full-Time Employment (fullTime)**
+    
+    Characteristics:
+    - Works standard full-time hours
+    - Complete teaching schedule
+    - Annual or monthly salary
+    - Full benefits package
+    - Contracted for full academic year
+    
+    Typical responsibilities:
+    - Multiple class assignments
+    - Homeroom duties
+    - Curriculum planning
+    - Parent-teacher conferences
+    - Administrative tasks
+  </Card>
+</CardGroup>
+
+<Note>
+  The working times are stored as:
+  - `partTime` for Part-Time employment
+  - `fullTime` for Full-Time employment
+</Note>
+
+## Salary Amount Guidelines
+
+<Accordion title="Salary Amount Format">
+  The `salary_amount` field is stored as text to accommodate various formats:
+  
+  **Recommended formats:**
+  - Annual salary: "$45,000"
+  - Monthly salary: "$3,750/month"
+  - Hourly rate: "$35/hour"
+  - Per-class rate: "$50/class"
+  
+  **Best practices:**
+  - Use consistent currency symbols
+  - Include time period for clarity (annual, monthly, hourly)
+  - Format numbers with appropriate separators
+  - Document pay frequency elsewhere if needed
+</Accordion>
+
+<Accordion title="Full-Time Salary Structure">
+  For full-time teachers, consider:
+  
+  **Base Salary Components:**
+  - Base annual amount
+  - Documented in salary_amount field
+  - Paid over 10-12 months
+  
+  **Additional Compensation:**
+  - Bonuses tracked in Teacher table (bonus_amount field)
+  - Separate from base salary
+  - May be performance-based or responsibility-based
+  
+  See [Teacher Management](/features/teacher-management) for bonus information.
+</Accordion>
+
+<Accordion title="Part-Time Compensation">
+  For part-time teachers:
+  
+  **Hourly Rate:**
+  - Document hourly rate in salary_amount
+  - Example: "$40/hour"
+  - Actual pay calculated based on hours worked
+  
+  **Per-Class Rate:**
+  - Some schools pay per class taught
+  - Example: "$200/class"
+  - Multiply by number of classes per term
+  
+  **Stipend or Fixed Amount:**
+  - Fixed payment for specific period
+  - Example: "$1,500/semester"
+  - Regardless of exact hours
+</Accordion>
+
+## Salary Records and Teacher Relationship
+
+<Steps>
+  <Step title="One-to-One Relationship">
+    Each salary record is linked to exactly one teacher via the `Teacher_ID` field.
+  </Step>
+
+  <Step title="Finding Teacher IDs">
+    Before creating a salary record:
+    1. Navigate to View > Teacher
+    2. Locate the teacher in the table
+    3. Note their Teacher_ID (first column)
+    4. Use this ID in the salary form
+  </Step>
+
+  <Step title="Multiple Records">
+    A teacher may have multiple salary records over time:
+    - Separate records for different academic years
+    - Records tracking salary changes
+    - Historical compensation data
+  </Step>
+
+  <Step title="Cross-Reference">
+    The Teacher table contains:
+    - Teacher personal information
+    - Bonus amounts (separate from base salary)
+    - Contact details
+    - Teaching specialization
+  </Step>
+</Steps>
+
+## Payroll Processing
+
+<Accordion title="Full-Time Teacher Payroll">
+  **Annual Salary Payment:**
+  
+  1. Record annual salary in salary_amount
+  2. Divide by number of pay periods (e.g., 12 months)
+  3. Process monthly/bi-weekly payments
+  4. Include any bonuses from Teacher table
+  5. Apply appropriate tax withholdings
+  
+  **Example:**
+  - Annual salary: $48,000
+  - Pay frequency: Monthly
+  - Base monthly pay: $4,000
+  - Plus bonus (if applicable): From Teacher.bonus_amount
+</Accordion>
+
+<Accordion title="Part-Time Teacher Payroll">
+  **Variable Hour Calculation:**
+  
+  1. Track hours worked (external timesheet system)
+  2. Multiply by hourly rate in salary_amount
+  3. Process payment according to schedule
+  4. May be bi-weekly or monthly
+  5. Pro-rated benefits if applicable
+  
+  **Example:**
+  - Hourly rate: $35/hour
+  - Hours worked in period: 40 hours
+  - Payment: $1,400
+</Accordion>
+
+<Accordion title="Salary vs. Bonus">
+  **Salary (This table):**
+  - Base compensation
+  - Regular, predictable payments
+  - Linked to employment type
+  - Required field
+  
+  **Bonus (Teacher table):**
+  - Additional compensation
+  - May be one-time or periodic
+  - Performance or responsibility-based
+  - Optional field
+  
+  **Total Compensation = Salary + Bonus**
+</Accordion>
+
+## Database Structure
+
+```sql
+Table: Salary
+Fields:
+  - Salary_ID (Primary Key, Auto-increment)
+  - Teacher_ID (Foreign Key to Teacher table, Required)
+  - salary_amount (VARCHAR, Required)
+  - workingTimes (ENUM/VARCHAR, Required)
+    Values: 'partTime', 'fullTime'
+
+Relationships:
+  - Many-to-One with Teacher table (multiple salary records can reference same teacher)
+```
+
+## Reporting and Analysis
+
+<CardGroup cols={3}>
+  <Card title="Payroll Summary" icon="calculator">
+    Calculate total payroll:
+    - Sum of all full-time salaries
+    - Sum of part-time compensation
+    - Total payroll budget
+    - Average salary by type
+  </Card>
+
+  <Card title="Employment Statistics" icon="chart-bar">
+    Track staffing metrics:
+    - Number of full-time teachers
+    - Number of part-time teachers
+    - Full-time equivalent (FTE)
+    - Staff distribution
+  </Card>
+
+  <Card title="Budget Planning" icon="piggy-bank">
+    Financial planning:
+    - Annual payroll costs
+    - Salary increase projections
+    - Budget allocation
+    - Compensation trends
+  </Card>
+</CardGroup>
+
+## Salary Administration Best Practices
+
+<Accordion title="Data Security">
+  **Critical security measures:**
+  
+  - Restrict access to payroll administrators only
+  - Use role-based access controls
+  - Encrypt salary data in database
+  - Maintain audit logs of all changes
+  - Secure backup of salary information
+  - Comply with privacy regulations
+  - Never display salary info in public reports
+</Accordion>
+
+<Accordion title="Record Keeping">
+  **Documentation requirements:**
+  
+  - Maintain complete salary history
+  - Document all salary changes with dates
+  - Keep approval records for increases
+  - Store employment contracts
+  - Archive old records appropriately
+  - Follow retention policies
+  - Prepare for audits
+</Accordion>
+
+<Accordion title="Salary Review Process">
+  **Annual review procedures:**
+  
+  1. **Review Schedule:** Conduct reviews at consistent times (e.g., end of fiscal year)
+  2. **Performance Evaluation:** Link to teacher performance assessments
+  3. **Market Comparison:** Compare with regional salary standards
+  4. **Budget Approval:** Ensure increases are budgeted and approved
+  5. **Update Records:** Record new salary amounts with effective dates
+  6. **Communication:** Notify teachers of compensation changes
+  7. **Documentation:** Archive approval and justification documents
+</Accordion>
+
+## Compliance Considerations
+
+<Warning>
+  **Legal and Regulatory Requirements:**
+  
+  - Ensure compliance with labor laws
+  - Follow minimum wage regulations
+  - Adhere to equal pay requirements
+  - Maintain proper tax documentation
+  - Provide required benefit statements
+  - Keep records for required retention periods
+  - Consult with legal/HR professionals for compliance
+</Warning>
+
+<Info>
+  **Integration Note:** Salary records reference Teacher profiles. Always create or verify the teacher record exists before adding salary information.
+  
+  See [Teacher Management](/features/teacher-management) for teacher profile details including bonus compensation.
+</Info>
+
+## Common Scenarios
+
+<Accordion title="New Teacher Hiring">
+  **Process flow:**
+  
+  1. Create teacher profile (Add > Teacher)
+  2. Record Teacher_ID assigned
+  3. Create salary record (Add > Salary)
+  4. Enter starting salary amount
+  5. Select employment type (Full-Time or Part-Time)
+  6. Add bonus amount in teacher profile if applicable
+  7. Submit and verify both records are linked
+</Accordion>
+
+<Accordion title="Salary Increase">
+  **Update procedure:**
+  
+  1. Obtain approval for salary increase
+  2. Navigate to Uptade > Salary
+  3. Enter the Salary_ID for the teacher
+  4. Update salary_amount with new value
+  5. Keep employment type (workingTimes) same unless changing
+  6. Document effective date and approval
+  7. Archive old salary information for records
+</Accordion>
+
+<Accordion title="Part-Time to Full-Time Conversion">
+  **Conversion steps:**
+  
+  1. Locate teacher's current salary record
+  2. Update workingTimes from "partTime" to "fullTime"
+  3. Update salary_amount to reflect annual salary
+  4. Adjust teaching schedule and class assignments
+  5. Update benefits and contract terms (external systems)
+  6. Document effective date of change
+  7. Communicate changes to teacher
+</Accordion>

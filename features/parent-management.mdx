@@ -1,0 +1,314 @@
+---
+title: Parent Management
+description: Manage parent and guardian contact information and student relationships
+---
+
+The Parent Management system maintains contact information for parents and guardians, enabling communication between the school and families.
+
+## Overview
+
+Parent records store essential contact information for student guardians. Each parent record can be linked to multiple students (for families with multiple children attending the school).
+
+<Card title="Key Features" icon="users">
+  - Create parent/guardian profiles
+  - Store comprehensive contact information
+  - Maintain multi-line address details
+  - Track email addresses for communication
+  - View all parent records in one table
+  - Update and delete parent information
+</Card>
+
+## Parent Information Fields
+
+The system tracks the following information for each parent or guardian:
+
+<ParamField path="Parent_ID" type="number" required>
+  Unique parent identifier (auto-generated)
+</ParamField>
+
+<ParamField path="Pname" type="text" required>
+  Parent's first name
+</ParamField>
+
+<ParamField path="Psurname" type="text" required>
+  Parent's last name
+</ParamField>
+
+<ParamField path="Paddress" type="textarea" required>
+  Complete residential address (supports multi-line text up to 50 columns × 10 rows)
+</ParamField>
+
+<ParamField path="Pemail" type="email" required>
+  Parent's email address for school communications
+</ParamField>
+
+## User Workflows
+
+<Tabs>
+  <Tab title="Add Parent">
+    ### Adding a New Parent
+
+    To register a new parent or guardian:
+
+    1. Navigate to **Add** > **Parent** in the navigation menu
+    2. Complete the parent registration form:
+
+    ```html
+    <form method="post" action="AddParent.php">
+        <label for="Pname">Parent First Name:</label>
+        <input required type="text" name="Pname"><br><br>
+        
+        <label for="Psurname">Parent Last Name:</label>
+        <input required type="text" name="Psurname"><br><br>
+        
+        <label for="Paddress">Parent Address</label> <br>
+        <textarea required name="Paddress" id="Paddress" cols="50" rows="10"></textarea><br><br>
+        
+        <label for="Pemail">Parent Email:</label>
+        <input type="email" name="Pemail"><br>
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    3. Click **Submit** to create the parent record
+
+    <Note>
+      Create the parent record before adding their children as students. The auto-generated Parent ID will be needed when enrolling students.
+    </Note>
+
+  </Tab>
+
+  <Tab title="View Parents">
+    ### Viewing All Parents
+
+    To access the parent directory:
+
+    1. Click **View** > **Parent** in the navigation
+    2. Browse the parent listing table
+
+    The parent table displays:
+
+    | Column | Width | Description |
+    |--------|-------|-------------|
+    | Parent ID | 150px | Unique identifier |
+    | Parent Name | 250px | First name |
+    | Parent Surname | 250px | Last name |
+    | Parent Address | 350px | Full residential address |
+    | Parent Email | 200px | Email address |
+
+    **Database Query:**
+    ```sql
+    SELECT Parent_ID, Pname, Psurname, Paddress, Pemail 
+    FROM Parent
+    ```
+
+    <Tip>
+      Use the Parent ID from this table when enrolling new students to link them to their parent or guardian.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="Update Parent">
+    ### Updating Parent Information
+
+    To modify parent contact details:
+
+    1. Navigate to **Uptade** > **Parent**
+    2. Enter the Parent ID and updated information
+    3. Submit the changes
+
+    <Info>
+      Keep parent contact information current to ensure effective communication about student progress, events, and important notices.
+    </Info>
+
+  </Tab>
+
+  <Tab title="Delete Parent">
+    ### Removing a Parent Record
+
+    To delete a parent from the system:
+
+    1. Go to **Delete** > **Parent**
+    2. Enter the Parent ID
+    3. Confirm deletion
+
+    <Warning>
+      Before deleting a parent record, ensure no students are currently linked to this Parent ID. Update student records first to reassign them to a different parent or guardian.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Contact Information Details
+
+<Accordion title="Address Format">
+  The address field uses a large textarea (50 columns × 10 rows) to accommodate complete address information:
+
+  **Recommended format:**
+  ```
+  [Street Number and Name]
+  [Apartment/Unit Number (if applicable)]
+  [City], [State/Province] [Postal Code]
+  [Country (if international)]
+  [Additional delivery instructions]
+  ```
+
+  **Example:**
+  ```
+  123 Main Street
+  Apartment 4B
+  Springfield, IL 62701
+  United States
+  Ring doorbell for entry
+  ```
+</Accordion>
+
+<Accordion title="Email Communication">
+  Parent email addresses serve as the primary digital communication channel for:
+  
+  - Report cards and progress reports
+  - School announcements and newsletters
+  - Event invitations and reminders
+  - Emergency notifications
+  - Parent-teacher conference scheduling
+  - Administrative communications
+  
+  The email field uses HTML5 validation to ensure proper email format.
+</Accordion>
+
+<Accordion title="Multiple Contact Points">
+  For families with two guardians:
+  
+  - Create separate parent records for each guardian
+  - Link students to the primary guardian's Parent ID
+  - Store the secondary guardian's information in notes or additional fields
+  - Consider future enhancements to support multiple parent linkages per student
+</Accordion>
+
+## Parent-Student Relationships
+
+<CardGroup cols={2}>
+  <Card title="Single Parent" icon="user">
+    **One parent, one or more students**
+    
+    One Parent ID can be associated with multiple student records, ideal for:
+    - Families with siblings
+    - Single-parent households
+    - Primary contact designation
+  </Card>
+
+  <Card title="Family Units" icon="home">
+    **Managing sibling groups**
+    
+    When adding multiple children from the same family:
+    1. Create one parent record
+    2. Note the auto-generated Parent ID
+    3. Use this ID for all children in the family
+    4. View linked students through student records
+  </Card>
+</CardGroup>
+
+## Communication Best Practices
+
+<Steps>
+  <Step title="Verify Email Addresses">
+    Always verify email addresses are correct and active. Send a test message after registration to confirm receipt.
+  </Step>
+
+  <Step title="Maintain Current Information">
+    Encourage parents to update their contact information whenever they move or change email addresses.
+  </Step>
+
+  <Step title="Privacy Protection">
+    Ensure parent contact information is kept confidential and only shared with authorized school personnel.
+  </Step>
+
+  <Step title="Regular Updates">
+    Review parent contact information at the beginning of each school year and update as needed.
+  </Step>
+</Steps>
+
+## Database Structure
+
+```sql
+Table: Parent
+Fields:
+  - Parent_ID (Primary Key, Auto-increment)
+  - Pname (VARCHAR, Required)
+  - Psurname (VARCHAR, Required)
+  - Paddress (TEXT, Required)
+  - Pemail (VARCHAR, Required)
+
+Relationships:
+  - One-to-Many with Student1 table (one parent can have multiple students)
+```
+
+## Common Use Cases
+
+<Accordion title="New Family Enrollment">
+  **Scenario:** A new family with two children is enrolling.
+  
+  **Steps:**
+  1. Create one parent record with contact information
+  2. Record the generated Parent ID (e.g., 101)
+  3. Create first student record using Parent ID 101
+  4. Create second student record using Parent ID 101
+  5. Both students now linked to the same parent
+</Accordion>
+
+<Accordion title="Address Change">
+  **Scenario:** A family has moved to a new address.
+  
+  **Steps:**
+  1. Navigate to View > Parent to find the Parent ID
+  2. Go to Uptade > Parent
+  3. Enter the Parent ID and new address information
+  4. Submit the update
+  5. The address change automatically applies to all linked students
+</Accordion>
+
+<Accordion title="Email Bounce Handling">
+  **Scenario:** Emails to a parent are bouncing.
+  
+  **Steps:**
+  1. Contact parent through alternative means (phone)
+  2. Obtain updated email address
+  3. Update parent record with new email
+  4. Send test email to verify delivery
+  5. Document the change date for records
+</Accordion>
+
+## Field Validation
+
+<CardGroup cols={2}>
+  <Card title="Required Fields" icon="asterisk">
+    All parent fields are required:
+    - First name (Pname)
+    - Last name (Psurname)
+    - Address (Paddress)
+    - Email (Pemail)
+    
+    Form submission will fail if any field is empty.
+  </Card>
+
+  <Card title="Email Format" icon="envelope">
+    Email validation ensures:
+    - Contains @ symbol
+    - Has domain extension
+    - No spaces in address
+    - Proper email structure
+    
+    Example: parent@email.com
+  </Card>
+</CardGroup>
+
+## Integration Points
+
+<Info>
+  **Student Management Integration**
+  
+  Parent records are directly referenced in the Student Management system. Before enrolling students, ensure parent records are created first.
+  
+  See [Student Management](/features/student-management) for details on linking students to parents.
+</Info>

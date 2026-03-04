@@ -1,0 +1,1171 @@
+---
+title: 'Operations Reference'
+description: 'Complete documentation of all PHP database operations in the Primary School Management System'
+icon: 'gears'
+---
+
+## Overview
+
+The Primary School Management System implements CRUD (Create, Read, Update, Delete) operations through PHP scripts that interact with a MySQL database. All operations use MySQLi extension for database connectivity.
+
+---
+
+## Database Connection
+
+All PHP operation files establish a database connection using the following pattern:
+
+<CodeGroup>
+```php Connection Pattern
+<?php
+$link = mysqli_connect(
+  "sdb-57.hosting.stackcp.net",
+  "student84-353031351c89", 
+  "ua92-studentAc",
+  "student84-353031351c89"
+);
+
+// Check connection
+if ($link === false) {
+    die("Connection failed: ");
+}
+?>
+```
+</CodeGroup>
+
+<ParamField query="host" type="string">
+  Database server hostname: `sdb-57.hosting.stackcp.net`
+</ParamField>
+
+<ParamField query="username" type="string">
+  Database username: `student84-353031351c89`
+</ParamField>
+
+<ParamField query="password" type="string">
+  Database password: `ua92-studentAc`
+</ParamField>
+
+<ParamField query="database" type="string">
+  Database name: `student84-353031351c89`
+</ParamField>
+
+---
+
+## Student Operations
+
+<Tabs>
+  <Tab title="Add Student">
+    ### Add Student Operation
+    
+    **File:** `AddStudent.php`  
+    **Table:** `Student1`  
+    **Operation:** INSERT
+    
+    #### Process Flow
+    
+    <Steps>
+      <Step title="Check Form Submission">
+        Verifies if the form was submitted using `isset($_POST['submit'])`
+      </Step>
+      
+      <Step title="Extract Form Data">
+        Retrieves all student fields from POST data
+      </Step>
+      
+      <Step title="Execute INSERT Query">
+        Inserts the new student record into the database
+      </Step>
+      
+      <Step title="Display Result">
+        Shows success or error message
+      </Step>
+    </Steps>
+    
+    #### PHP Variables
+    
+    <ParamField query="$Sname" type="string">
+      Student's first name from form input
+    </ParamField>
+    
+    <ParamField query="$Ssurname" type="string">
+      Student's last name from form input
+    </ParamField>
+    
+    <ParamField query="$Sbirthday" type="date">
+      Student's date of birth from form input
+    </ParamField>
+    
+    <ParamField query="$Parent_ID" type="string">
+      Parent ID (foreign key reference)
+    </ParamField>
+    
+    <ParamField query="$Class_ID" type="string">
+      Class ID (foreign key reference)
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Add Student
+    if (isset($_POST['submit'])) {
+        $Sname = $_POST['Sname'];
+        $Ssurname = $_POST['Ssurname'];
+        $Sbirthday = $_POST['Sbirthday'];
+        $Parent_ID = $_POST['Parent_ID'];
+        $Class_ID = $_POST['Class_ID'];
+    
+        $send = "INSERT INTO Student1 (Sname,Ssurname,Sbirthday,Parent_ID,Class_ID) 
+                 VALUES ('$Sname','$Ssurname','$Sbirthday','$Parent_ID','$Class_ID')";
+        
+        if (mysqli_query($link, $send)) {
+          echo "New record created successfully";
+        } else {
+          echo "Error adding record ";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    INSERT INTO Student1 (Sname, Ssurname, Sbirthday, Parent_ID, Class_ID) 
+    VALUES ('John', 'Doe', '2015-03-15', '123', '5');
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="View Students">
+    ### View Students Operation
+    
+    **File:** `ViewStudent.php`  
+    **Table:** `Student1`  
+    **Operation:** SELECT
+    
+    #### Process Flow
+    
+    <Steps>
+      <Step title="Connect to Database">
+        Establishes MySQLi connection
+      </Step>
+      
+      <Step title="Execute SELECT Query">
+        Retrieves all student records
+      </Step>
+      
+      <Step title="Fetch Results">
+        Iterates through result set using `fetch_assoc()`
+      </Step>
+      
+      <Step title="Display Data">
+        Renders student data in an HTML table
+      </Step>
+    </Steps>
+    
+    #### Retrieved Columns
+    
+    - `Sid` - Student ID (primary key)
+    - `Sname` - Student first name
+    - `Ssurname` - Student last name
+    - `Sbirthday` - Student birthday
+    - `Parent_ID` - Associated parent ID
+    - `Class_ID` - Associated class ID
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php View Students
+    $sql = mysqli_query($link, "SELECT Sid,Sname,Ssurname,Sbirthday,Parent_ID,Class_ID FROM Student1");
+    
+    while ($row = $sql->fetch_assoc()) {
+        echo "
+        <tr>
+            <th>{$row['Sid']}</th>
+            <th>{$row['Sname']}</th>
+            <th>{$row['Ssurname']}</th>
+            <th>{$row['Sbirthday']}</th>
+            <th>{$row['Parent_ID']}</th>
+            <th>{$row['Class_ID']}</th>
+        </tr>";
+    }
+    ```
+    
+    ```sql SQL Query
+    SELECT Sid, Sname, Ssurname, Sbirthday, Parent_ID, Class_ID 
+    FROM Student1;
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Student">
+    ### Update Student Operation
+    
+    **File:** `UptadeStudent.php`  
+    **Table:** `Student1`  
+    **Operation:** UPDATE
+    
+    #### PHP Variables
+    
+    <ParamField query="$Sid" type="string">
+      Student ID to identify the record to update
+    </ParamField>
+    
+    <ParamField query="$Sname" type="string">
+      New student first name
+    </ParamField>
+    
+    <ParamField query="$Ssurname" type="string">
+      New student last name
+    </ParamField>
+    
+    <ParamField query="$Sbirthday" type="date">
+      New student birthday
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Update Student
+    if (isset($_POST['submit'])) {
+        $Sid = $_POST['Sid'];
+        $Sname = $_POST['Sname'];
+        $Ssurname = $_POST['Ssurname'];
+        $Sbirthday = $_POST['Sbirthday'];
+    
+        $uptade = "UPDATE Student1 
+                   SET Sname = '$Sname', Ssurname = '$Ssurname', Sbirthday='$Sbirthday' 
+                   WHERE Sid = '$Sid'";
+        
+        if (mysqli_query($link, $uptade)) {
+            echo "Record has been uptaded.";
+        } else {
+            echo "Error uptading record.";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    UPDATE Student1 
+    SET Sname = 'John', Ssurname = 'Doe', Sbirthday = '2015-03-15' 
+    WHERE Sid = '101';
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Delete Student">
+    ### Delete Student Operation
+    
+    **File:** `DeleteStudent.php`  
+    **Table:** `Student1`  
+    **Operation:** DELETE
+    
+    #### PHP Variables
+    
+    <ParamField query="$Sid" type="string">
+      Student ID to identify the record to delete
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Delete Student
+    if (isset($_POST['submit'])) {
+        $Sid = $_POST['Sid'];
+        
+        $delete = "DELETE FROM Student1 WHERE Sid=$Sid";
+        
+        if (mysqli_query($connection, $delete)) {
+            echo "Record has been deleted.";
+        } else {
+            echo "Error deleting record.";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    DELETE FROM Student1 WHERE Sid = 101;
+    ```
+    </CodeGroup>
+    
+    <Warning>
+      This operation permanently removes the student record. Consider implementing soft deletes for data recovery.
+    </Warning>
+  </Tab>
+</Tabs>
+
+---
+
+## Teacher Operations
+
+<Tabs>
+  <Tab title="Add Teacher">
+    ### Add Teacher Operation
+    
+    **File:** `AddTeacher.php`  
+    **Table:** `Teacher`  
+    **Operation:** INSERT
+    
+    #### PHP Variables
+    
+    <ParamField query="$bonus_amount" type="string">
+      Optional bonus amount for the teacher
+    </ParamField>
+    
+    <ParamField query="$teacher_field" type="string">
+      Subject or field of expertise
+    </ParamField>
+    
+    <ParamField query="$Tname" type="string">
+      Teacher's first name
+    </ParamField>
+    
+    <ParamField query="$Tsurname" type="string">
+      Teacher's last name
+    </ParamField>
+    
+    <ParamField query="$Taddress" type="string">
+      Teacher's complete address
+    </ParamField>
+    
+    <ParamField query="$Tmobile" type="string">
+      Teacher's mobile phone number
+    </ParamField>
+    
+    <ParamField query="$Temail" type="string">
+      Teacher's email address
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Add Teacher
+    if (isset($_POST['submit'])) {
+        $bonus_amount = $_POST['bonus_amount'];
+        $teacher_field = $_POST['teacher_field'];
+        $Tname = $_POST['Tname'];
+        $Tsurname = $_POST['Tsurname'];
+        $Taddress = $_POST['Taddress'];
+        $Tmobile = $_POST['Tmobile'];
+        $Temail = $_POST['Temail'];
+    
+        $sql = "INSERT INTO Teacher (bonus_amount,teacher_field,Tname,Tsurname,Taddress,Tmobile,Temail) 
+                VALUES ('$bonus_amount','$teacher_field','$Tname','$Tsurname','$Taddress','$Tmobile','$Temail')";
+        
+        if (mysqli_query($link, $sql)) {
+          echo "New record created successfully";
+        } else {
+          echo "Error adding record ";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    INSERT INTO Teacher (bonus_amount, teacher_field, Tname, Tsurname, Taddress, Tmobile, Temail) 
+    VALUES ('500', 'Mathematics', 'Jane', 'Smith', '123 Main St', '555-1234', 'jane@school.com');
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="View Teachers">
+    ### View Teachers Operation
+    
+    **File:** `ViewTeacher.php`  
+    **Table:** `Teacher`  
+    **Operation:** SELECT
+    
+    #### Retrieved Columns
+    
+    - `Teacher_ID` - Teacher ID (primary key)
+    - `bonus_amount` - Bonus amount
+    - `teacher_field` - Teaching field/subject
+    - `Tname` - Teacher first name
+    - `Tsurname` - Teacher last name
+    - `Taddress` - Teacher address
+    - `Tmobile` - Teacher mobile number
+    - `Temail` - Teacher email
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php View Teachers
+    $sql = mysqli_query($link, "SELECT Teacher_ID,bonus_amount,teacher_field,Tname,Tsurname,Taddress,Tmobile,Temail FROM Teacher");
+    
+    while ($row = $sql->fetch_assoc()) {
+        echo "
+        <tr>
+            <th>{$row['Teacher_ID']}</th>
+            <th>{$row['bonus_amount']}</th>
+            <th>{$row['teacher_field']}</th>
+            <th>{$row['Tname']}</th>
+            <th>{$row['Tsurname']}</th>
+            <th>{$row['Taddress']}</th>
+            <th>{$row['Tmobile']}</th>
+            <th>{$row['Temail']}</th>
+        </tr>";
+    }
+    ```
+    
+    ```sql SQL Query
+    SELECT Teacher_ID, bonus_amount, teacher_field, Tname, Tsurname, Taddress, Tmobile, Temail 
+    FROM Teacher;
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Teacher">
+    ### Update Teacher Operation
+    
+    **File:** `UptadeTeacher.php`  
+    **Table:** `Teacher`  
+    **Operation:** UPDATE
+    
+    Updates teacher information using Teacher_ID as the identifier. All fields from the Add operation can be updated.
+  </Tab>
+  
+  <Tab title="Delete Teacher">
+    ### Delete Teacher Operation
+    
+    **File:** `DeleteTeacher.php`  
+    **Table:** `Teacher`  
+    **Operation:** DELETE
+    
+    Deletes a teacher record by Teacher_ID.
+  </Tab>
+</Tabs>
+
+---
+
+## Parent Operations
+
+<Tabs>
+  <Tab title="Add Parent">
+    ### Add Parent Operation
+    
+    **File:** `AddParent.php`  
+    **Table:** `Parent`  
+    **Operation:** INSERT
+    
+    #### PHP Variables
+    
+    <ParamField query="$pname" type="string">
+      Parent's first name (note: variable name lowercase, column uppercase)
+    </ParamField>
+    
+    <ParamField query="$psurname" type="string">
+      Parent's last name
+    </ParamField>
+    
+    <ParamField query="$paddress" type="string">
+      Parent's complete address
+    </ParamField>
+    
+    <ParamField query="$pemail" type="string">
+      Parent's email address (optional)
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Add Parent
+    if (isset($_POST['submit'])) {
+        $pname = $_POST['Pname'];
+        $psurname = $_POST['Psurname'];
+        $paddress = $_POST['Paddress'];
+        $pemail = $_POST['Pemail'];
+    
+        $sql = "INSERT INTO Parent (Pname,Psurname,Paddress,Pemail) 
+                VALUES ('$pname','$psurname','$paddress','$pemail')";
+        
+        if (mysqli_query($link, $sql)) {
+          echo "New record created successfully";
+        } else {
+          echo "Error adding record ";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    INSERT INTO Parent (Pname, Psurname, Paddress, Pemail) 
+    VALUES ('Robert', 'Johnson', '456 Oak Ave', 'robert@email.com');
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="View Parents">
+    ### View Parents Operation
+    
+    **File:** `ViewParent.php`  
+    **Table:** `Parent`  
+    **Operation:** SELECT
+    
+    Retrieves and displays all parent records from the database.
+  </Tab>
+  
+  <Tab title="Update Parent">
+    ### Update Parent Operation
+    
+    **File:** `UptadeParent.php`  
+    **Table:** `Parent`  
+    **Operation:** UPDATE
+    
+    Updates parent information using Parent_ID as the identifier.
+  </Tab>
+  
+  <Tab title="Delete Parent">
+    ### Delete Parent Operation
+    
+    **File:** `DeleteParent.php`  
+    **Table:** `Parent`  
+    **Operation:** DELETE
+    
+    Deletes a parent record by Parent_ID.
+  </Tab>
+</Tabs>
+
+---
+
+## Class Operations
+
+<Tabs>
+  <Tab title="Add Class">
+    ### Add Class Operation
+    
+    **File:** `AddClass.php`  
+    **Table:** `Class`  
+    **Operation:** INSERT
+    
+    #### PHP Variables
+    
+    <ParamField query="$classYear" type="string">
+      Class name or year designation
+    </ParamField>
+    
+    <ParamField query="$capacity" type="integer">
+      Maximum student capacity
+    </ParamField>
+    
+    <ParamField query="$Teacher_ID" type="string">
+      ID of the assigned teacher (foreign key)
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Add Class
+    if (isset($_POST['submit'])) {
+        $classYear = $_POST['classYear'];
+        $capacity = $_POST['capacity'];
+        $Teacher_ID = $_POST['Teacher_ID'];
+    
+        $sql = "INSERT INTO Class (classYear,capacity,Teacher_ID) 
+                VALUES ('$classYear','$capacity','$Teacher_ID')";
+        
+        if (mysqli_query($link, $sql)) {
+          echo "New record created successfully";
+        } else {
+          echo "Error adding record ";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    INSERT INTO Class (classYear, capacity, Teacher_ID) 
+    VALUES ('Grade 5', 30, '42');
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="View Classes">
+    ### View Classes Operation
+    
+    **File:** `ViewClass.php`  
+    **Table:** `Class`  
+    **Operation:** SELECT
+    
+    Retrieves and displays all class records with their capacity and assigned teacher.
+  </Tab>
+  
+  <Tab title="Update Class">
+    ### Update Class Operation
+    
+    **File:** `UptadeClass.php`  
+    **Table:** `Class`  
+    **Operation:** UPDATE
+    
+    Updates class information using Class_ID as the identifier.
+  </Tab>
+  
+  <Tab title="Delete Class">
+    ### Delete Class Operation
+    
+    **File:** `DeleteClass.php`  
+    **Table:** `Class`  
+    **Operation:** DELETE
+    
+    Deletes a class record by Class_ID.
+  </Tab>
+</Tabs>
+
+---
+
+## Salary Operations
+
+<Tabs>
+  <Tab title="Add Salary">
+    ### Add Salary Operation
+    
+    **File:** `AddSalary.php`  
+    **Table:** `Salary`  
+    **Operation:** INSERT
+    
+    #### PHP Variables
+    
+    <ParamField query="$Teacher_ID" type="string">
+      Teacher ID to assign salary to
+    </ParamField>
+    
+    <ParamField query="$salary_amount" type="string">
+      Salary amount
+    </ParamField>
+    
+    <ParamField query="$workingTimes" type="string">
+      Working time type: `partTime` or `fullTime`
+    </ParamField>
+    
+    #### Database Query
+    
+    <CodeGroup>
+    ```php Add Salary
+    if (isset($_POST['submit'])) {
+        $Teacher_ID = $_POST['Teacher_ID'];
+        $salary_amount = $_POST['salary_amount'];
+        $workingTimes = $_POST['workingTimes'];
+    
+        $sql = "INSERT INTO Salary (Teacher_ID,salary_amount,workingTimes) 
+                VALUES ('$Teacher_ID','$salary_amount','$workingTimes')";
+        
+        if (mysqli_query($link, $sql)) {
+            echo "New record created successfully";
+        } else {
+            echo "Error adding record ";
+        }
+    }
+    ```
+    
+    ```sql SQL Query
+    INSERT INTO Salary (Teacher_ID, salary_amount, workingTimes) 
+    VALUES ('42', '45000', 'fullTime');
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="View Salaries">
+    ### View Salaries Operation
+    
+    **File:** `ViewSalary.php`  
+    **Table:** `Salary`  
+    **Operation:** SELECT
+    
+    Retrieves and displays all salary records.
+  </Tab>
+  
+  <Tab title="Update Salary">
+    ### Update Salary Operation
+    
+    **File:** `UptadeSalary.php`  
+    **Table:** `Salary`  
+    **Operation:** UPDATE
+    
+    Updates salary information using Salary_ID as the identifier.
+  </Tab>
+  
+  <Tab title="Delete Salary">
+    ### Delete Salary Operation
+    
+    **File:** `DeleteSalary.php`  
+    **Table:** `Salary`  
+    **Operation:** DELETE
+    
+    Deletes a salary record by Salary_ID.
+  </Tab>
+</Tabs>
+
+---
+
+## Gym Member Operations
+
+<Accordion title="Add Gym Member">
+  ### Add Gym Member Operation
+  
+  **File:** `AddGymMember.php`  
+  **Table:** `Gym`  
+  **Operation:** INSERT
+  
+  #### PHP Variables
+  
+  <ParamField query="$Sid" type="string">
+    Student ID reference
+  </ParamField>
+  
+  <ParamField query="$gymFullName" type="string">
+    Full name of gym member
+  </ParamField>
+  
+  <ParamField query="$userRegDate" type="date">
+    Registration date
+  </ParamField>
+  
+  <ParamField query="$memberType" type="string">
+    Membership tier (bronzeMember, silverMember, goldMember, diamondMember)
+  </ParamField>
+  
+  <ParamField query="$medicalCondition" type="string">
+    Medical conditions (optional)
+  </ParamField>
+  
+  #### Special Logic: Membership Expiration Calculation
+  
+  The system calculates membership expiration based on member type:
+  
+  <CodeGroup>
+  ```php Expiration Logic
+  $memberType = $_POST['memberType'];
+  
+  if ($memberType == "bronzeMember") {
+      $endingDate = date_create("now");
+      date_add($endingDate, date_interval_create_from_date_string("30 days"));
+      echo "Your membership will expire on ";
+      echo date_format($endingDate, "Y-m-d");
+  } elseif ($memberType == "silverMember") {
+      $endingDate = date_create("now");
+      date_add($endingDate, date_interval_create_from_date_string("60 days"));
+      echo "Your membership will expire on ";
+      echo date_format($endingDate, "Y-m-d");
+  } elseif ($memberType == "goldMember") {
+      $endingDate = date_create("now");
+      date_add($endingDate, date_interval_create_from_date_string("90 days"));
+      echo "Your membership will expire on ";
+      echo date_format($endingDate, "Y-m-d");
+  } elseif ($memberType == "diamondMember") {
+      $endingDate = date_create("now");
+      date_add($endingDate, date_interval_create_from_date_string("180 days"));
+      echo "Your membership will expire on ";
+      echo date_format($endingDate, "Y-m-d");
+  }
+  ```
+  </CodeGroup>
+  
+  #### Database Query
+  
+  <CodeGroup>
+  ```php Add Gym Member
+  if (isset($_POST['submit'])) {
+      $Sid = $_POST['Sid'];
+      $gymFullName = $_POST['gymFullName'];
+      $userRegDate = $_POST['userRegDate'];
+      $memberType = $_POST['memberType'];
+      $medicalCondition = $_POST['medicalCondition'];
+  
+      $gym = "INSERT INTO Gym (Sid,gymFullName,userRegDate,memberType,medicalCondition) 
+              VALUES ('$Sid','$gymFullName','$userRegDate','$memberType','$medicalCondition')";
+      
+      if (mysqli_query($link, $gym)) {
+        echo "<br><br>New record created successfully";
+      } else {
+        echo "<br><br>Error adding record ";
+      }
+  }
+  ```
+  
+  ```sql SQL Query
+  INSERT INTO Gym (Sid, gymFullName, userRegDate, memberType, medicalCondition) 
+  VALUES ('101', 'John Doe', '2024-03-04', 'goldMember', 'None');
+  ```
+  </CodeGroup>
+  
+  <Info>
+    Membership duration:
+    - Bronze: 30 days
+    - Silver: 60 days
+    - Gold: 90 days
+    - Diamond: 180 days
+  </Info>
+</Accordion>
+
+<Accordion title="View Gym Members">
+  ### View Gym Members Operation
+  
+  **File:** `ViewGymMember.php`  
+  **Table:** `Gym`  
+  **Operation:** SELECT
+  
+  Retrieves and displays all gym member records.
+</Accordion>
+
+<Accordion title="Update Gym Member">
+  ### Update Gym Member Operation
+  
+  **File:** `UptadeGym.php`  
+  **Table:** `Gym`  
+  **Operation:** UPDATE
+  
+  Updates gym member information using gymMemberID as the identifier.
+</Accordion>
+
+<Accordion title="Delete Gym Member">
+  ### Delete Gym Member Operation
+  
+  **File:** `DeleteGymMember.php`  
+  **Table:** `Gym`  
+  **Operation:** DELETE
+  
+  Deletes a gym member record by gymMemberID.
+</Accordion>
+
+---
+
+## Contact Operations
+
+### Add Contact Message
+
+**File:** `Contact.php`  
+**Table:** `Contact`  
+**Operation:** INSERT
+
+#### PHP Variables
+
+<ParamField query="$contactName" type="string">
+  Name of the person submitting the contact
+</ParamField>
+
+<ParamField query="$returnContact" type="string">
+  Return email address (optional)
+</ParamField>
+
+<ParamField query="$message" type="text">
+  Message content
+</ParamField>
+
+#### Database Query
+
+<CodeGroup>
+```php Add Contact
+if (isset($_POST['submit'])) {
+    $contactName = $_POST['contactName'];
+    $returnContact = $_POST['returnContact'];
+    $message = $_POST['message'];
+   
+    $send = "INSERT INTO Contact (contactName,returnContact,message) 
+             VALUES ('$contactName','$returnContact','$message')";
+    
+    if (mysqli_query($link, $send)) {
+      echo "New record created successfully";
+    } else {
+      echo "Error adding record ";
+    }
+}
+```
+
+```sql SQL Query
+INSERT INTO Contact (contactName, returnContact, message) 
+VALUES ('John Doe', 'john@email.com', 'Inquiry about enrollment process');
+```
+</CodeGroup>
+
+### View Contact Messages
+
+**File:** `ViewContact.php`  
+**Table:** `Contact`  
+**Operation:** SELECT
+
+Retrieves and displays all submitted contact messages.
+
+---
+
+## Database Tables Structure
+
+Based on the operations, here are the database tables used:
+
+<CardGroup cols={2}>
+  <Card title="Student1" icon="graduation-cap">
+    - Sid (Primary Key)
+    - Sname
+    - Ssurname
+    - Sbirthday
+    - Parent_ID (Foreign Key)
+    - Class_ID (Foreign Key)
+  </Card>
+  
+  <Card title="Teacher" icon="chalkboard-user">
+    - Teacher_ID (Primary Key)
+    - bonus_amount
+    - teacher_field
+    - Tname
+    - Tsurname
+    - Taddress
+    - Tmobile
+    - Temail
+  </Card>
+  
+  <Card title="Parent" icon="users">
+    - Parent_ID (Primary Key)
+    - Pname
+    - Psurname
+    - Paddress
+    - Pemail
+  </Card>
+  
+  <Card title="Class" icon="door-open">
+    - Class_ID (Primary Key)
+    - classYear
+    - capacity
+    - Teacher_ID (Foreign Key)
+  </Card>
+  
+  <Card title="Salary" icon="dollar-sign">
+    - Salary_ID (Primary Key)
+    - Teacher_ID (Foreign Key)
+    - salary_amount
+    - workingTimes
+  </Card>
+  
+  <Card title="Gym" icon="dumbbell">
+    - gymMemberID (Primary Key)
+    - Sid (Foreign Key)
+    - gymFullName
+    - userRegDate
+    - memberType
+    - medicalCondition
+  </Card>
+  
+  <Card title="Contact" icon="envelope">
+    - Contact_ID (Primary Key)
+    - contactName
+    - returnContact
+    - message
+  </Card>
+</CardGroup>
+
+---
+
+## Common Operation Patterns
+
+### INSERT Operations
+
+All INSERT operations follow this pattern:
+
+<Steps>
+  <Step title="Verify Submission">
+    Check if form was submitted using `isset($_POST['submit'])`
+  </Step>
+  
+  <Step title="Extract POST Data">
+    Retrieve all form fields from `$_POST` array
+  </Step>
+  
+  <Step title="Build SQL Query">
+    Construct INSERT query with extracted values
+  </Step>
+  
+  <Step title="Execute Query">
+    Use `mysqli_query($link, $sql)` to execute
+  </Step>
+  
+  <Step title="Return Feedback">
+    Echo success or error message
+  </Step>
+</Steps>
+
+### SELECT Operations
+
+All SELECT operations follow this pattern:
+
+<Steps>
+  <Step title="Execute Query">
+    Use `mysqli_query($link, $sql)` with SELECT statement
+  </Step>
+  
+  <Step title="Iterate Results">
+    Loop through results using `while ($row = $sql->fetch_assoc())`
+  </Step>
+  
+  <Step title="Display Data">
+    Echo HTML table rows with data from `$row` array
+  </Step>
+</Steps>
+
+### UPDATE Operations
+
+All UPDATE operations follow this pattern:
+
+<Steps>
+  <Step title="Get Record ID">
+    Extract the primary key from POST data
+  </Step>
+  
+  <Step title="Get New Values">
+    Extract updated field values from POST
+  </Step>
+  
+  <Step title="Build UPDATE Query">
+    Construct UPDATE query with WHERE clause using ID
+  </Step>
+  
+  <Step title="Execute and Confirm">
+    Execute query and display result message
+  </Step>
+</Steps>
+
+### DELETE Operations
+
+All DELETE operations follow this pattern:
+
+<Steps>
+  <Step title="Get Record ID">
+    Extract the primary key from POST data
+  </Step>
+  
+  <Step title="Build DELETE Query">
+    Construct DELETE query with WHERE clause
+  </Step>
+  
+  <Step title="Execute and Confirm">
+    Execute query and display result message
+  </Step>
+</Steps>
+
+---
+
+## Security Vulnerabilities
+
+<Warning>
+  **Critical Security Issues:**
+  
+  The current implementation has severe security vulnerabilities that must be addressed:
+</Warning>
+
+<AccordionGroup>
+  <Accordion title="SQL Injection" icon="shield-exclamation">
+    All queries use direct string concatenation without sanitization:
+    
+    ```php Vulnerable Code
+    $sql = "INSERT INTO Student1 (Sname) VALUES ('$Sname')";
+    ```
+    
+    **Solution:** Use prepared statements with parameterized queries:
+    
+    ```php Secure Code
+    $stmt = $link->prepare("INSERT INTO Student1 (Sname) VALUES (?)");
+    $stmt->bind_param("s", $Sname);
+    $stmt->execute();
+    ```
+  </Accordion>
+  
+  <Accordion title="No Input Validation" icon="filter">
+    No server-side validation of user inputs. The system trusts all POST data.
+    
+    **Solution:** Implement input validation:
+    
+    ```php Input Validation
+    if (empty($_POST['Sname']) || strlen($_POST['Sname']) > 100) {
+        die("Invalid student name");
+    }
+    $Sname = filter_var($_POST['Sname'], FILTER_SANITIZE_STRING);
+    ```
+  </Accordion>
+  
+  <Accordion title="Exposed Credentials" icon="key">
+    Database credentials are hardcoded in every PHP file.
+    
+    **Solution:** Use environment variables or configuration files:
+    
+    ```php Secure Config
+    $link = mysqli_connect(
+        getenv('DB_HOST'),
+        getenv('DB_USER'),
+        getenv('DB_PASS'),
+        getenv('DB_NAME')
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="No CSRF Protection" icon="lock">
+    Forms lack CSRF tokens, allowing cross-site request forgery attacks.
+    
+    **Solution:** Implement CSRF tokens in all forms.
+  </Accordion>
+  
+  <Accordion title="Poor Error Handling" icon="circle-exclamation">
+    Generic error messages provide no debugging information but could expose database structure.
+    
+    **Solution:** Log detailed errors server-side, show generic messages to users.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices & Recommendations
+
+<CardGroup cols={2}>
+  <Card title="Use Prepared Statements" icon="shield-check">
+    Replace all string concatenation queries with prepared statements to prevent SQL injection
+  </Card>
+  
+  <Card title="Input Validation" icon="check-double">
+    Validate and sanitize all user inputs on the server side
+  </Card>
+  
+  <Card title="Secure Configuration" icon="gear">
+    Move database credentials to environment variables or secure config files
+  </Card>
+  
+  <Card title="Error Handling" icon="bug">
+    Implement proper error logging and user-friendly error messages
+  </Card>
+  
+  <Card title="Transaction Support" icon="rotate">
+    Use database transactions for operations that modify multiple tables
+  </Card>
+  
+  <Card title="Connection Pooling" icon="database">
+    Implement a database connection class to avoid redundant connections
+  </Card>
+  
+  <Card title="Data Type Enforcement" icon="hashtag">
+    Use proper data types in database and validate before insertion
+  </Card>
+  
+  <Card title="Audit Logging" icon="clock-rotate-left">
+    Log all CRUD operations for accountability and debugging
+  </Card>
+</CardGroup>
+
+---
+
+## MySQLi Functions Reference
+
+<AccordionGroup>
+  <Accordion title="mysqli_connect()">
+    Establishes a connection to the MySQL database server.
+    
+    **Parameters:** host, username, password, database  
+    **Returns:** MySQLi link identifier or false on failure
+  </Accordion>
+  
+  <Accordion title="mysqli_query()">
+    Executes a SQL query on the database.
+    
+    **Parameters:** connection link, SQL query string  
+    **Returns:** Result object for SELECT queries, true/false for other queries
+  </Accordion>
+  
+  <Accordion title="fetch_assoc()">
+    Fetches a result row as an associative array.
+    
+    **Returns:** Associative array with column names as keys  
+    **Note:** Field names are case-sensitive
+  </Accordion>
+  
+  <Accordion title="isset()">
+    Checks whether a variable is set and not NULL.
+    
+    **Returns:** true if variable exists and is not NULL, false otherwise  
+    **Usage:** Verifying form submission
+  </Accordion>
+</AccordionGroup>

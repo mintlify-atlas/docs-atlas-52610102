@@ -1,0 +1,496 @@
+---
+title: 'Database Connection'
+description: 'Database connection setup and configuration for the Primary School Management System'
+icon: 'plug'
+---
+
+## Overview
+
+The Primary School Management System uses PHP's MySQLi extension to connect to a MySQL database. All PHP files establish their own database connections using the procedural mysqli interface.
+
+---
+
+## Connection Configuration
+
+### Connection Parameters
+
+The application uses the following connection parameters consistently across all PHP files:
+
+<ParamField path="host" type="string" required>
+  **sdb-57.hosting.stackcp.net**
+  
+  The MySQL database server hostname
+</ParamField>
+
+<ParamField path="username" type="string" required>
+  **student84-353031351c89**
+  
+  Database username for authentication
+</ParamField>
+
+<ParamField path="password" type="string" required>
+  **ua92-studentAc**
+  
+  Database password for authentication
+</ParamField>
+
+<ParamField path="database" type="string" required>
+  **student84-353031351c89**
+  
+  The database name to connect to
+</ParamField>
+
+---
+
+## Connection Pattern
+
+### Standard Connection Method
+
+All PHP files in the application use this consistent pattern:
+
+```php
+<?php
+// Establish connection to MySQL database
+$link = mysqli_connect(
+    "sdb-57.hosting.stackcp.net",
+    "student84-353031351c89",
+    "ua92-studentAc",
+    "student84-353031351c89"
+);
+
+// Check if connection was successful
+if ($link === false) {
+    die("Connection failed: ");
+}
+?>
+```
+
+### Alternative Variable Naming
+
+Some files use `$connection` instead of `$link`:
+
+```php
+<?php
+$connection = mysqli_connect(
+    "sdb-57.hosting.stackcp.net",
+    "student84-353031351c89",
+    "ua92-studentAc",
+    "student84-353031351c89"
+);
+
+if ($connection === false) {
+    die("Connection failed: ");
+}
+?>
+```
+
+<Note>
+Both `$link` and `$connection` variable names are used throughout the codebase. Ensure you use the correct variable name when executing queries in each file.
+</Note>
+
+---
+
+## Connection Files Reference
+
+Here's where database connections are established in the application:
+
+### Student Operations
+- `AddStudent.php` - Uses `$link`
+- `ViewStudent.php` - Uses `$link`
+- `UptadeStudent.php` - Uses `$link`
+- `DeleteStudent.php` - Uses `$link`
+
+### Teacher Operations
+- `AddTeacher.php` - Uses `$link`
+- `ViewTeacher.php` - Uses `$link`
+- `UptadeTeacher.php` - Uses `$link`
+- `DeleteTeacher.php` - Uses `$link`
+
+### Parent Operations
+- `AddParent.php` - Uses `$link`
+- `ViewParent.php` - Uses `$link`
+- `UptadeParent.php` - Uses `$link`
+- `DeleteParent.php` - Uses `$link`
+
+### Class Operations
+- `AddClass.php` - Uses `$link`
+- `ViewClass.php` - Uses `$link`
+- `UptadeClass.php` - Uses `$link`
+- `DeleteClass.php` - Uses `$link`
+
+### Other Operations
+- `admin_login.php` - Uses `$connection`
+- `AddGymMember.php` - Uses `$link`
+- `ViewGymMember.php` - Uses `$link`
+- `AddSalary.php` - Uses `$link`
+- `ViewSalary.php` - Uses `$link`
+- `Contact.php` - Uses `$link`
+- `ViewContact.php` - Uses `$link`
+
+---
+
+## Executing Queries
+
+### Insert Operations
+
+After establishing a connection, insert queries follow this pattern:
+
+```php
+<?php
+// Connection established as $link
+
+if (isset($_POST['submit'])) {
+    $Sname = $_POST['Sname'];
+    $Ssurname = $_POST['Ssurname'];
+    $Sbirthday = $_POST['Sbirthday'];
+    $Parent_ID = $_POST['Parent_ID'];
+    $Class_ID = $_POST['Class_ID'];
+
+    $send = "INSERT INTO Student1 (Sname, Ssurname, Sbirthday, Parent_ID, Class_ID) 
+             VALUES ('$Sname', '$Ssurname', '$Sbirthday', '$Parent_ID', '$Class_ID')";
+    
+    if (mysqli_query($link, $send)) {
+        echo "New record created successfully";
+    } else {
+        echo "Error adding record";
+    }
+}
+?>
+```
+
+### Select Operations
+
+Query results are fetched using `mysqli_query()` and processed with `fetch_assoc()`:
+
+```php
+<?php
+$sql = mysqli_query($link, "SELECT Sid, Sname, Ssurname, Sbirthday, Parent_ID, Class_ID FROM Student1");
+
+while ($row = $sql->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td>{$row['Sid']}</td>";
+    echo "<td>{$row['Sname']}</td>";
+    echo "<td>{$row['Ssurname']}</td>";
+    echo "<td>{$row['Sbirthday']}</td>";
+    echo "<td>{$row['Parent_ID']}</td>";
+    echo "<td>{$row['Class_ID']}</td>";
+    echo "</tr>";
+}
+?>
+```
+
+### Update Operations
+
+```php
+<?php
+if (isset($_POST['submit'])) {
+    $Sid = $_POST['Sid'];
+    $Sname = $_POST['Sname'];
+    $Ssurname = $_POST['Ssurname'];
+    $Sbirthday = $_POST['Sbirthday'];
+
+    $update = "UPDATE Student1 
+               SET Sname = '$Sname', Ssurname = '$Ssurname', Sbirthday = '$Sbirthday' 
+               WHERE Sid = '$Sid'";
+    
+    if (mysqli_query($link, $update)) {
+        echo "Record has been updated.";
+    } else {
+        echo "Error updating record.";
+    }
+}
+?>
+```
+
+### Delete Operations
+
+```php
+<?php
+if (isset($_POST['submit'])) {
+    $Sid = $_POST['Sid'];
+    
+    $delete = "DELETE FROM Student1 WHERE Sid = '$Sid'";
+    
+    if (mysqli_query($link, $delete)) {
+        echo "Record deleted successfully";
+    } else {
+        echo "Error deleting record";
+    }
+}
+?>
+```
+
+---
+
+## Connection Error Handling
+
+### Current Implementation
+
+The application uses basic error handling:
+
+```php
+if ($link === false) {
+    die("Connection failed: ");
+}
+```
+
+### Recommended Enhanced Error Handling
+
+For production environments, implement more detailed error handling:
+
+```php
+<?php
+// Enable error reporting for development
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Attempt connection
+$link = mysqli_connect(
+    "sdb-57.hosting.stackcp.net",
+    "student84-353031351c89",
+    "ua92-studentAc",
+    "student84-353031351c89"
+);
+
+// Enhanced error checking
+if (!$link) {
+    // Log error for debugging
+    error_log("Database connection failed: " . mysqli_connect_error());
+    
+    // Display user-friendly message
+    die("Unable to connect to database. Please try again later.");
+}
+
+// Set character set to prevent encoding issues
+mysqli_set_charset($link, "utf8mb4");
+?>
+```
+
+---
+
+## Security Considerations
+
+<Warning>
+The current implementation has several security vulnerabilities that should be addressed:
+</Warning>
+
+### SQL Injection Vulnerability
+
+The application directly concatenates user input into SQL queries:
+
+```php
+// VULNERABLE - Do not use in production
+$sql = "INSERT INTO Student1 (Sname) VALUES ('$Sname')";
+```
+
+### Recommended: Use Prepared Statements
+
+Replace direct concatenation with prepared statements:
+
+```php
+<?php
+// Secure implementation using prepared statements
+$stmt = mysqli_prepare($link, "INSERT INTO Student1 (Sname, Ssurname, Sbirthday, Parent_ID, Class_ID) VALUES (?, ?, ?, ?, ?)");
+
+mysqli_stmt_bind_param($stmt, "sssii", $Sname, $Ssurname, $Sbirthday, $Parent_ID, $Class_ID);
+
+if (mysqli_stmt_execute($stmt)) {
+    echo "New record created successfully";
+} else {
+    echo "Error adding record";
+}
+
+mysqli_stmt_close($stmt);
+?>
+```
+
+### Parameter Types for mysqli_bind_param
+
+<ResponseField name="i" type="integer">
+  For INT, BIGINT, and other integer types
+</ResponseField>
+
+<ResponseField name="d" type="double">
+  For FLOAT, DOUBLE, DECIMAL types
+</ResponseField>
+
+<ResponseField name="s" type="string">
+  For VARCHAR, TEXT, DATE, and other string types
+</ResponseField>
+
+<ResponseField name="b" type="blob">
+  For BLOB and binary data types
+</ResponseField>
+
+---
+
+## Configuration Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Environment Variables" icon="key">
+    Store database credentials in environment variables or a separate configuration file, not hardcoded in PHP files
+  </Card>
+  <Card title="Connection Pooling" icon="arrows-rotate">
+    Use persistent connections with `mysqli_connect()` p: prefix for better performance under high load
+  </Card>
+  <Card title="Character Encoding" icon="language">
+    Always set character encoding to utf8mb4 after connection to support all Unicode characters
+  </Card>
+  <Card title="Error Logging" icon="file-lines">
+    Log database errors to files instead of displaying them to users in production
+  </Card>
+</CardGroup>
+
+---
+
+## Recommended Configuration File
+
+Create a separate configuration file for database credentials:
+
+```php
+<?php
+// config.php - Database configuration
+define('DB_HOST', getenv('DB_HOST') ?: 'sdb-57.hosting.stackcp.net');
+define('DB_USER', getenv('DB_USER') ?: 'student84-353031351c89');
+define('DB_PASS', getenv('DB_PASS') ?: 'ua92-studentAc');
+define('DB_NAME', getenv('DB_NAME') ?: 'student84-353031351c89');
+define('DB_CHARSET', 'utf8mb4');
+?>
+```
+
+Then in your PHP files:
+
+```php
+<?php
+require_once 'config.php';
+
+$link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+if (!$link) {
+    error_log("Connection failed: " . mysqli_connect_error());
+    die("Unable to connect to database");
+}
+
+mysqli_set_charset($link, DB_CHARSET);
+?>
+```
+
+---
+
+## Connection Lifecycle
+
+### Opening a Connection
+
+```php
+$link = mysqli_connect($host, $username, $password, $database);
+```
+
+### Using the Connection
+
+```php
+$result = mysqli_query($link, $sql);
+```
+
+### Closing the Connection
+
+<Note>
+The current codebase does not explicitly close connections. PHP automatically closes connections at the end of script execution, but it's best practice to close them manually.
+</Note>
+
+```php
+mysqli_close($link);
+```
+
+### Complete Example
+
+```php
+<?php
+// Establish connection
+$link = mysqli_connect(
+    "sdb-57.hosting.stackcp.net",
+    "student84-353031351c89",
+    "ua92-studentAc",
+    "student84-353031351c89"
+);
+
+if (!$link) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+// Perform database operations
+$result = mysqli_query($link, "SELECT * FROM Student1");
+
+while ($row = mysqli_fetch_assoc($result)) {
+    // Process results
+}
+
+// Free result set
+mysqli_free_result($result);
+
+// Close connection
+mysqli_close($link);
+?>
+```
+
+---
+
+## Troubleshooting
+
+### Connection Refused
+
+If you receive "Connection refused" errors:
+
+- Verify the database server is running
+- Check firewall rules allow connections to the MySQL port (default 3306)
+- Confirm the hostname is correct and resolvable
+
+### Authentication Failed
+
+If authentication fails:
+
+- Verify username and password are correct
+- Check the user has permissions to access the specified database
+- Ensure the user is allowed to connect from your host/IP address
+
+### Database Not Found
+
+If the database doesn't exist:
+
+- Verify the database name is spelled correctly
+- Check the database exists on the server
+- Confirm your user has access to that specific database
+
+### Character Encoding Issues
+
+If you see garbled text or special characters display incorrectly:
+
+```php
+// Set connection character set
+mysqli_set_charset($link, "utf8mb4");
+```
+
+---
+
+## Migration Recommendations
+
+<Steps>
+  <Step title="Centralize Configuration">
+    Create a single `config.php` file with all database connection parameters
+  </Step>
+  
+  <Step title="Create Connection Helper">
+    Build a `db_connect.php` file that handles connection logic with proper error handling
+  </Step>
+  
+  <Step title="Implement Prepared Statements">
+    Migrate all SQL queries from string concatenation to prepared statements
+  </Step>
+  
+  <Step title="Add Connection Pooling">
+    Consider implementing persistent connections for better performance
+  </Step>
+  
+  <Step title="Environment Variables">
+    Move credentials to environment variables for security
+  </Step>
+</Steps>

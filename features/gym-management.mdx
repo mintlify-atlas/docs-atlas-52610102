@@ -1,0 +1,384 @@
+---
+title: Gym Membership Management
+description: Track gym memberships, membership tiers, and medical conditions for students
+---
+
+The Gym Membership Management system tracks students enrolled in the school's gym facilities, their membership levels, and any medical conditions that may affect physical activities.
+
+## Overview
+
+The gym membership feature allows the school to manage students who participate in gym programs, offering different membership tiers and tracking important health information.
+
+<Card title="Key Features" icon="dumbbell">
+  - Enroll students in gym membership programs
+  - Track four membership tiers (Bronze, Silver, Gold, Diamond)
+  - Record registration dates
+  - Document medical conditions for safety
+  - View all gym members in one table
+  - Update and manage membership information
+</Card>
+
+## Gym Membership Fields
+
+The system captures the following information for each gym member:
+
+<ParamField path="gymMemberID" type="number" required>
+  Unique gym membership identifier (auto-generated)
+</ParamField>
+
+<ParamField path="Sid" type="number" required>
+  Reference to the student's ID, linking the gym membership to a student record
+</ParamField>
+
+<ParamField path="gymFullName" type="text" required>
+  Full name of the gym member
+</ParamField>
+
+<ParamField path="userRegDate" type="date" required>
+  Date when the member registered for the gym (maximum: 2023-04-03)
+</ParamField>
+
+<ParamField path="memberType" type="select" required>
+  Membership tier level: Bronze, Silver, Gold, or Diamond
+</ParamField>
+
+<ParamField path="medicalCondition" type="text">
+  Optional field to document any medical conditions that may affect gym participation
+</ParamField>
+
+## User Workflows
+
+<Tabs>
+  <Tab title="Add Gym Member">
+    ### Enrolling a New Gym Member
+
+    To add a student to the gym membership program:
+
+    1. Navigate to **Add** > **Gym** in the main menu
+    2. Complete the gym membership registration form:
+
+    ```html
+    <form method="post" action="AddGymMember.php">
+        <label for="gymFullName">Enter full name :</label>
+        <input required type="text" name="gymFullName"><br><br>
+        
+        <label for="userRegDate">Register Date:</label>
+        <input required type="date" max="2023-04-03" name="userRegDate"><br><br>
+        
+        <label for="memberType">Course:</label>
+        <select required id="memberType" name="memberType">
+            <option value="bronzeMember">Bronze</option>
+            <option value="silverMember">Silver</option>
+            <option value="goldMember">Gold</option>
+            <option value="diamondMember">Diamond</option>
+        </select> <br><br>
+        
+        <label for="medicalCondition">Medical Condition (if there're any)</label>
+        <input type="text" name="medicalCondition"><br>
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    3. Click **Submit** to create the gym membership
+
+    <Note>
+      The medical condition field is optional but highly recommended for student safety. Document any conditions that may affect physical activity, such as asthma, heart conditions, or allergies.
+    </Note>
+
+  </Tab>
+
+  <Tab title="View Gym Members">
+    ### Viewing All Gym Memberships
+
+    To access the gym membership directory:
+
+    1. Click **View** > **Gym** in the navigation
+    2. Review the gym member listing table
+
+    The gym membership table displays:
+
+    | Column | Width | Description |
+    |--------|-------|-------------|
+    | Student ID | 100px | Linked student |
+    | Gym Member ID | 150px | Unique gym ID |
+    | Gym Member Full Name | 250px | Member's name |
+    | Registration Date | 250px | Enrollment date |
+    | memberType | 100px | Membership tier |
+    | medicalCondition | 200px | Health notes |
+
+    **Database Query:**
+    ```sql
+    SELECT Sid, gymMemberID, gymFullName, userRegDate, memberType, medicalCondition
+    FROM Gym
+    ```
+
+    <Tip>
+      Review the medical condition column before gym activities to ensure proper supervision and accommodations for students with health concerns.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="Update Membership">
+    ### Updating Gym Membership Information
+
+    To modify a gym membership:
+
+    1. Navigate to **Uptade** > **Gym**
+    2. Enter the gym member ID and updated details
+    3. Submit the changes
+
+    Common updates include:
+    - Upgrading or downgrading membership tier
+    - Adding newly diagnosed medical conditions
+    - Updating member name
+
+    <Info>
+      When students' health status changes, update the medical condition field immediately to ensure safety during gym activities.
+    </Info>
+
+  </Tab>
+
+  <Tab title="Delete Membership">
+    ### Removing a Gym Membership
+
+    To remove a student from the gym program:
+
+    1. Go to **Delete** > **Gym**
+    2. Enter the Gym Member ID
+    3. Confirm deletion
+
+    <Warning>
+      Deleting a gym membership does not delete the student record. It only removes their gym program enrollment.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Membership Tiers
+
+<CardGroup cols={2}>
+  <Card title="Bronze Member" icon="medal" color="#cd7f32">
+    **Basic tier membership**
+    
+    Typically includes:
+    - Access to basic gym facilities
+    - Standard equipment usage
+    - Regular gym hours
+    - Group fitness classes
+  </Card>
+
+  <Card title="Silver Member" icon="medal" color="#c0c0c0">
+    **Mid-level membership**
+    
+    Bronze benefits plus:
+    - Extended gym hours
+    - Additional equipment access
+    - Priority class registration
+    - Guest privileges (limited)
+  </Card>
+
+  <Card title="Gold Member" icon="medal" color="#ffd700">
+    **Premium tier membership**
+    
+    Silver benefits plus:
+    - Personal training sessions
+    - Locker rental included
+    - All group classes unlimited
+    - Nutritional guidance
+  </Card>
+
+  <Card title="Diamond Member" icon="gem" color="#b9f2ff">
+    **Elite tier membership**
+    
+    All benefits plus:
+    - One-on-one coaching
+    - Customized fitness plans
+    - Priority equipment access
+    - Special events access
+    - Premium locker facilities
+  </Card>
+</CardGroup>
+
+<Note>
+  The membership tier values are stored as:
+  - `bronzeMember`
+  - `silverMember`
+  - `goldMember`
+  - `diamondMember`
+</Note>
+
+## Medical Conditions Tracking
+
+<Accordion title="Why Track Medical Conditions?">
+  Recording medical conditions is crucial for:
+  
+  - **Student Safety:** Gym instructors can monitor students with health conditions
+  - **Emergency Preparedness:** Quick reference during medical emergencies
+  - **Activity Modifications:** Tailor exercises to individual needs
+  - **Liability Protection:** Document awareness of health issues
+  - **Parent Communication:** Share appropriate activities with families
+</Accordion>
+
+<Accordion title="Common Conditions to Document">
+  Examples of medical conditions relevant to gym activities:
+  
+  **Respiratory:**
+  - Asthma
+  - Exercise-induced bronchospasm
+  - Chronic allergies
+  
+  **Cardiovascular:**
+  - Heart murmurs
+  - High/low blood pressure
+  - Previous heart surgery
+  
+  **Musculoskeletal:**
+  - Recent injuries or sprains
+  - Joint problems
+  - Limited range of motion
+  
+  **Other:**
+  - Diabetes (blood sugar management)
+  - Epilepsy (seizure precautions)
+  - Vision or hearing impairments
+  - Severe allergies (bee stings, latex)
+</Accordion>
+
+<Accordion title="Medical Condition Field Format">
+  Best practices for documenting conditions:
+  
+  - Be specific but concise
+  - Include severity if relevant
+  - Note any required accommodations
+  - Update when conditions change
+  
+  **Examples:**
+  - "Mild asthma - inhaler available"
+  - "Previous ankle sprain - no jumping exercises"
+  - "Diabetes Type 1 - monitor for low blood sugar"
+  - "Severe peanut allergy - EpiPen in office"
+</Accordion>
+
+## Student Linkage
+
+<Info>
+  **Important:** Gym memberships are linked to student records via the `Sid` (Student ID) field. This connection allows you to:
+  
+  - View student's full academic record alongside gym membership
+  - Track students who participate in gym programs
+  - Cross-reference parent contact information
+  - Coordinate with class schedules
+  
+  Ensure students are enrolled in the system before adding gym memberships.
+</Info>
+
+## Registration Date Management
+
+<Steps>
+  <Step title="Record Registration Date">
+    Always record the actual date when the student enrolled in the gym program. This helps track:
+    - Membership duration
+    - Renewal dates
+    - Seasonal enrollment patterns
+  </Step>
+
+  <Step title="Date Validation">
+    The system enforces a maximum registration date of April 3, 2023. For current use, update this validation in the source code to reflect current dates.
+  </Step>
+
+  <Step title="Renewal Tracking">
+    Use the registration date to identify:
+    - Members due for renewal
+    - Long-term vs. new members
+    - Enrollment trends by season
+  </Step>
+</Steps>
+
+## Database Structure
+
+```sql
+Table: Gym
+Fields:
+  - gymMemberID (Primary Key, Auto-increment)
+  - Sid (Foreign Key to Student1 table)
+  - gymFullName (VARCHAR, Required)
+  - userRegDate (DATE, Required)
+  - memberType (ENUM/VARCHAR, Required)
+    Values: 'bronzeMember', 'silverMember', 'goldMember', 'diamondMember'
+  - medicalCondition (VARCHAR, Optional)
+
+Relationships:
+  - Many-to-One with Student1 table (linked via Sid)
+```
+
+## Reporting and Analytics
+
+<CardGroup cols={3}>
+  <Card title="Membership Distribution" icon="chart-pie">
+    Track the breakdown of membership tiers:
+    - Number of Bronze members
+    - Number of Silver members
+    - Number of Gold members
+    - Number of Diamond members
+    
+    Helps with resource planning and pricing.
+  </Card>
+
+  <Card title="Health Monitoring" icon="heartbeat">
+    Identify students with medical conditions:
+    - Count of members with conditions
+    - Common condition types
+    - Special supervision needs
+    
+    Ensures adequate staffing for safety.
+  </Card>
+
+  <Card title="Enrollment Trends" icon="chart-line">
+    Analyze registration patterns:
+    - New memberships by month
+    - Peak enrollment periods
+    - Retention rates
+    
+    Informs marketing and capacity planning.
+  </Card>
+</CardGroup>
+
+## Safety Best Practices
+
+<Warning>
+  **Critical Safety Procedures:**
+  
+  1. **Review medical conditions** before each gym session
+  2. **Train staff** on common conditions and emergency responses
+  3. **Keep emergency contacts** readily available (via parent records)
+  4. **Stock appropriate medical supplies** (inhalers, EpiPens, etc.)
+  5. **Update conditions regularly** as students' health status changes
+  6. **Document incidents** and follow up with parents
+</Warning>
+
+## Best Practices
+
+<Accordion title="Enrollment Management">
+  - Enroll students at the beginning of each term/semester
+  - Verify student information is current before gym enrollment
+  - Link to existing student records (don't create duplicates)
+  - Confirm membership tier with parents/administration
+  - Document payment or program approval
+</Accordion>
+
+<Accordion title="Medical Documentation">
+  - Request parent/guardian to complete health questionnaire
+  - Update medical information annually
+  - Get parent signature on liability waivers
+  - Keep medical information confidential
+  - Share only with authorized gym staff and administrators
+</Accordion>
+
+<Accordion title="Data Maintenance">
+  - Archive memberships for graduated students
+  - Remove invalid or expired memberships
+  - Update membership tiers as students upgrade/downgrade
+  - Maintain historical records for reporting
+  - Regular audits to ensure data accuracy
+</Accordion>

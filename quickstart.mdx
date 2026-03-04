@@ -1,80 +1,409 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart Guide
+description: Get up and running with the Primary School Management System in minutes
 ---
 
-## Get started in three steps
+## Quick Setup
 
-Get your documentation site running locally and make your first customization.
+This guide will walk you through setting up and using the Primary School Management System to manage your school's data efficiently.
 
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+<Steps>
+  <Step title="Access the Admin Panel">
+    Navigate to the admin login page and authenticate with your credentials.
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+    ```php admin_login.php
+    <form method="post">
+        <label for="admin_user">admin user: </label>
+        <input required type="text" name="admin_user" /><br /><br />
+        <label for="admin_pass">admin password :</label>
+        <input required type="password" name="admin_pass" /><br /><br />
+        <input type="submit" name="submit">
+    </form>
+    ```
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    <Warning>
+    Keep your admin credentials secure. Only authorized personnel should access the management system.
+    </Warning>
+  </Step>
 
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+  <Step title="Navigate to the Dashboard">
+    After successful login, you'll be directed to the main dashboard (`index.html`) where you can access all management features through the navigation menu.
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    The navigation bar provides four main operations:
+    - **View** - Browse existing records
+    - **Add** - Create new entries
+    - **Delete** - Remove records
+    - **Update** - Modify existing data
+  </Step>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+  <Step title="Configure Database Connection">
+    Ensure your database connection is properly configured. The system uses MySQLi for database operations.
+    
+    ```php
+    $link = mysqli_connect(
+        "your-host.com",
+        "your-username",
+        "your-password",
+        "your-database"
+    );
+    
+    // Check connection
+    if ($link === false) {
+        die("Connection failed: ");
+    }
+    ```
+    
+    <Note>
+    Update the connection parameters in all PHP files to match your database configuration.
+    </Note>
+  </Step>
+</Steps>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## Managing Students
 
-### Step 3: Go live
+### Adding a New Student
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+To add a student to the system:
 
-## Next steps
+<Steps>
+  <Step title="Navigate to Add Student">
+    Click **Add** → **Student** from the navigation menu to access the student registration form.
+  </Step>
 
-Now that you have your docs running, explore these key features:
+  <Step title="Fill in Student Details">
+    Complete the required fields:
+    
+    - Student First Name
+    - Student Last Name
+    - Birthday (must be a past date)
+    - Parent ID (existing parent record)
+    - Class ID (existing class record)
+    
+    ```html AddStudent.html
+    <label for="Sname">Student Name:*</label>
+    <input type="text" required name="Sname"><br /><br />
+    
+    <label for="Ssurname">Student Lastname:*</label>
+    <input type="text" required name="Ssurname"><br /><br />
+    
+    <label for="Sbirthday">Student Birthday:*</label>
+    <input type="date" required max="2023-04-06" name="Sbirthday" /><br /><br />
+    
+    <label for="Parent_ID">Parent ID:* </label>
+    <input type="text" required name="Parent_ID"><br><br>
+    
+    <label for="Class_ID">Class ID:*</label>
+    <input type="text" required name="Class_ID"><br>
+    ```
+  </Step>
 
-<CardGroup cols={2}>
+  <Step title="Submit the Form">
+    Click the submit button. The system will process the data using `AddStudent.php`:
+    
+    ```php AddStudent.php
+    if (isset($_POST['submit'])) {
+        $Sname = $_POST['Sname'];
+        $Ssurname = $_POST['Ssurname'];
+        $Sbirthday = $_POST['Sbirthday'];
+        $Parent_ID = $_POST['Parent_ID'];
+        $Class_ID = $_POST['Class_ID'];
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+        $send = "INSERT INTO Student1 
+                 (Sname,Ssurname,Sbirthday,Parent_ID,Class_ID) 
+                 VALUES ('$Sname','$Ssurname','$Sbirthday',
+                         '$Parent_ID','$Class_ID')";
+        
+        if (mysqli_query($link, $send)) {
+            echo "New record created successfully";
+        } else {
+            echo "Error adding record ";
+        }
+    }
+    ```
+  </Step>
+</Steps>
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+### Viewing Students
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+Access the student list by clicking **View** → **Student**:
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+```php ViewStudent.php
+$sql = mysqli_query($link, "SELECT Sid,Sname,Ssurname,Sbirthday,Parent_ID,Class_ID FROM Student1");
 
-</CardGroup>
+while ($row = $sql->fetch_assoc()){
+    echo "
+    <tr>
+        <th>{$row['Sid']}</th>
+        <th>{$row['Sname']}</th>
+        <th>{$row['Ssurname']}</th>
+        <th>{$row['Sbirthday']}</th>
+        <th>{$row['Parent_ID']}</th>
+        <th>{$row['Class_ID']}</th>
+    </tr>";
+}
+```
+
+This displays all students in a formatted table with their ID, name, birthday, parent, and class information.
+
+### Updating Student Records
+
+To modify student information:
+
+1. Navigate to **Update** → **Student**
+2. Enter the Student ID and new information
+3. Submit the form
+
+```php UptadeStudent.php
+if (isset($_POST['submit'])) {
+    $Sid = $_POST['Sid'];
+    $Sname = $_POST['Sname'];
+    $Ssurname = $_POST['Ssurname'];
+    $Sbirthday = $_POST['Sbirthday'];
+
+    $uptade = "UPDATE Student1 
+               SET Sname = '$Sname',
+                   Ssurname = '$Ssurname',
+                   Sbirthday='$Sbirthday' 
+               WHERE Sid= '$Sid'";
+    
+    if(mysqli_query($link,$uptade)){
+        echo "Record has been uptaded.";
+    } else {
+        echo "Error uptading record.";
+    }
+}
+```
+
+### Deleting Students
+
+To remove a student record:
+
+1. Navigate to **Delete** → **Student**
+2. Enter the Student ID
+3. Confirm deletion
+
+```php DeleteStudent.php
+if(isset($_POST['submit'])){
+    $Sid = $_POST['Sid'];
+    $delete = "DELETE FROM Student1 WHERE Sid=$Sid";
+    
+    if(mysqli_query($connection,$delete)){
+        echo "Record has been deleted.";
+    } else {
+        echo "Error deleting record.";
+    }
+}
+```
+
+<Warning>
+Deletion is permanent. Ensure you have the correct Student ID before confirming deletion.
+</Warning>
+
+## Managing Teachers
+
+### Adding a Teacher
+
+Navigate to **Add** → **Teacher** and fill in the teacher information form:
+
+```php AddTeacher.php
+if (isset($_POST['submit'])) {
+    $bonus_amount = $_POST['bonus_amount'];
+    $teacher_field = $_POST['teacher_field'];
+    $Tname = $_POST['Tname'];
+    $Tsurname = $_POST['Tsurname'];
+    $Taddress = $_POST['Taddress'];
+    $Tmobile = $_POST['Tmobile'];
+    $Temail = $_POST['Temail'];
+
+    $sql = "INSERT INTO Teacher 
+            (bonus_amount,teacher_field,Tname,Tsurname,
+             Taddress,Tmobile,Temail) 
+            VALUES ('$bonus_amount','$teacher_field','$Tname',
+                    '$Tsurname','$Taddress','$Tmobile','$Temail')";
+    
+    if (mysqli_query($link, $sql)) {
+        echo "New record created successfully";
+    } else {
+        echo "Error adding record ";
+    }
+}
+```
+
+<Info>
+Teacher records include specialization fields and bonus amounts for compensation tracking.
+</Info>
+
+## Managing Parents
+
+### Adding a Parent
+
+Parents must be added before students can be associated with them:
+
+```html AddParent.html
+<form method="post" action="AddParent.php">
+    <label for="Pname">Parent First Name:</label>
+    <input required type="text" name="Pname"><br><br>
+    
+    <label for="Psurname">Parent Last Name:</label>
+    <input required type="text" name="Psurname"><br><br>
+    
+    <label for="Paddress">Parent Address</label> <br>
+    <textarea required name="Paddress" cols="50" rows="10"></textarea><br><br>
+    
+    <label for="Pemail">Parent Email:</label>
+    <input type="email" name="Pemail"><br>
+    
+    <input type="submit" name="submit">
+</form>
+```
+
+## Managing Classes
+
+### Creating a Class
+
+Classes require a year name, capacity, and assigned teacher:
+
+```php AddClass.php
+if (isset($_POST['submit'])) {
+    $classYear = $_POST['classYear'];
+    $capacity = $_POST['capacity'];
+    $Teacher_ID = $_POST['Teacher_ID'];
+
+    $sql = "INSERT INTO Class (classYear,capacity,Teacher_ID) 
+            VALUES ('$classYear','$capacity','$Teacher_ID')";
+    
+    if (mysqli_query($link, $sql)) {
+        echo "New record created successfully";
+    } else {
+        echo "Error adding record ";
+    }
+}
+```
+
+### Viewing Classes
+
+The class view displays all classes with their capacity and assigned teacher:
+
+```php ViewClass.php
+$sql = mysqli_query($link, "SELECT Class_ID, classYear, capacity, Teacher_ID FROM Class");
+
+while ($row = $sql->fetch_assoc()){
+    echo "
+    <tr>
+        <th>{$row['Class_ID']}</th>
+        <th>{$row['classYear']}</th>
+        <th>{$row['capacity']}</th>
+        <th>{$row['Teacher_ID']}</th>
+    </tr>";
+}
+```
+
+## Managing Salaries
+
+### Processing Teacher Salaries
+
+Track teacher compensation based on working hours:
+
+```php AddSalary.php
+if (isset($_POST['submit'])) {
+    $Teacher_ID = $_POST['Teacher_ID'];
+    $salary_amount = $_POST['salary_amount'];
+    $workingTimes = $_POST['workingTimes'];
+
+    $sql = "INSERT INTO Salary (Teacher_ID,salary_amount,workingTimes) 
+            VALUES ('$Teacher_ID','$salary_amount','$workingTimes')";
+    
+    if (mysqli_query($link, $sql)) {
+        echo "New record created successfully";
+    } else {
+        echo "Error adding record ";
+    }
+}
+```
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+Salary records are linked to teachers via the Teacher_ID foreign key. Ensure the teacher exists before creating salary records.
 </Note>
+
+## Best Practices
+
+### Data Entry Guidelines
+
+<CardGroup cols={2}>
+  <Card title="Required Fields" icon="asterisk">
+    Always complete all required fields marked with asterisks (*) to ensure data integrity.
+  </Card>
+  
+  <Card title="Foreign Keys" icon="link">
+    Verify that Parent IDs, Class IDs, and Teacher IDs exist before referencing them in other records.
+  </Card>
+  
+  <Card title="Data Validation" icon="check-circle">
+    Use appropriate date formats and validate email addresses to maintain clean data.
+  </Card>
+  
+  <Card title="Regular Backups" icon="database">
+    Implement regular database backups to prevent data loss.
+  </Card>
+</CardGroup>
+
+### Common Operations Workflow
+
+1. **New Student Enrollment**:
+   - Add parent record first
+   - Create/verify class exists
+   - Add student with parent and class references
+
+2. **New Teacher Setup**:
+   - Add teacher record with contact details
+   - Assign teacher to a class
+   - Set up salary record
+
+3. **Class Organization**:
+   - Create class with capacity
+   - Assign a teacher
+   - Enroll students up to capacity limit
+
+## Security Recommendations
+
+<Warning>
+The current implementation has several security considerations:
+
+1. **SQL Injection** - Use prepared statements instead of direct query concatenation
+2. **Password Security** - Implement password hashing (bcrypt/Argon2)
+3. **Session Management** - Add proper session handling for authenticated users
+4. **Input Validation** - Sanitize all user inputs before database operations
+5. **HTTPS** - Always use HTTPS in production environments
+</Warning>
+
+## Next Steps
+
+Now that you're familiar with the basic operations:
+
+- Explore the View pages to see all existing records
+- Practice adding, updating, and deleting records
+- Familiarize yourself with the navigation structure
+- Review the database schema to understand entity relationships
+
+<Info>
+For additional support or to report issues, use the Contact Us page accessible from the main navigation menu.
+</Info>
+
+## Troubleshooting
+
+### Common Issues
+
+**Connection Failed Error**
+- Verify database credentials are correct
+- Check that the database server is accessible
+- Ensure MySQLi extension is enabled in PHP
+
+**Record Not Created**
+- Verify all required fields are filled
+- Check for foreign key constraint violations
+- Ensure proper data types match database schema
+
+**Authentication Failed**
+- Confirm admin credentials are correct
+- Check that the admin_login table exists and has valid records
+- Verify database connection is established before authentication attempt

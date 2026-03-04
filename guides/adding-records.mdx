@@ -1,0 +1,302 @@
+---
+title: Adding Records
+description: Learn how to add new records to the Primary School Management System including students, teachers, parents, classes, gym members, and salaries.
+---
+
+## Overview
+
+The Primary School Management System allows you to add various types of records through dedicated HTML forms. Each form collects specific information and submits it to a PHP script that inserts the data into the database using MySQL.
+
+## Accessing Add Forms
+
+<Steps>
+  <Step title="Navigate to the Add menu">
+    From the navigation bar, click on the **Add** dropdown button to reveal all available record types.
+  </Step>
+  
+  <Step title="Select record type">
+    Choose the type of record you want to add:
+    - Student
+    - Parent
+    - Teacher
+    - Class
+    - Gym Member
+    - Salary
+  </Step>
+</Steps>
+
+<Note>
+All forms are accessible from the navigation dropdown menu located at the top of every page in the system.
+</Note>
+
+## Adding a Student
+
+To add a new student to the system, navigate to `AddStudent.html` from the Add dropdown menu.
+
+<Steps>
+  <Step title="Fill in student information">
+    The student form requires the following fields:
+    
+    ```html
+    <form method="post" action="AddStudent.php">
+        <label for="Sname">Student Name:*</label>
+        <input type="text" required name="Sname">
+        
+        <label for="Ssurname">Student Lastname:*</label>
+        <input type="text" required name="Ssurname">
+        
+        <label for="Sbirthday">Student Birthday:*</label>
+        <input type="date" required max="2023-04-06" name="Sbirthday" />
+        
+        <label for="Parent_ID">Parent ID:*</label>
+        <input type="text" required name="Parent_ID">
+        
+        <label for="Class_ID">Class ID:*</label>
+        <input type="text" required name="Class_ID">
+    </form>
+    ```
+  </Step>
+  
+  <Step title="Enter required details">
+    - **Student Name** (`Sname`): First name of the student
+    - **Student Lastname** (`Ssurname`): Last name of the student
+    - **Student Birthday** (`Sbirthday`): Date of birth (must be before April 6, 2023)
+    - **Parent ID** (`Parent_ID`): ID of the associated parent record
+    - **Class ID** (`Class_ID`): ID of the class the student belongs to
+  </Step>
+  
+  <Step title="Submit the form">
+    Click the **Submit** button to create the student record.
+  </Step>
+</Steps>
+
+<Info>
+The system validates that the birthday cannot be later than April 6, 2023. Make sure the Parent ID and Class ID already exist in the database before creating a student record.
+</Info>
+
+### Backend Processing
+
+When you submit the student form, the `AddStudent.php` script processes the data:
+
+```php
+if (isset($_POST['submit'])) {
+    $Sname = $_POST['Sname'];
+    $Ssurname = $_POST['Ssurname'];
+    $Sbirthday = $_POST['Sbirthday'];
+    $Parent_ID = $_POST['Parent_ID'];
+    $Class_ID = $_POST['Class_ID'];
+
+    $send = "INSERT INTO Student1 (Sname,Ssurname,Sbirthday,Parent_ID,Class_ID) 
+             VALUES ('$Sname','$Ssurname','$Sbirthday','$Parent_ID','$Class_ID')";
+    
+    if (mysqli_query($link, $send)) {
+        echo "New record created successfully";
+    } else {
+        echo "Error adding record";
+    }
+}
+```
+
+The script inserts the data into the `Student1` table and displays a success or error message.
+
+## Adding a Teacher
+
+To add a new teacher, navigate to `AddTeacher.html`.
+
+<Steps>
+  <Step title="Complete teacher form">
+    The teacher form includes these fields:
+    
+    ```html
+    <form method="post" action="AddTeacher.php">
+        <label for="bonus_amount">Bonus Amount:</label>
+        <input type="text" name="bonus_amount" />
+        
+        <label for="teacher_field">Teacher Field</label>
+        <input required type="text" name="teacher_field" />
+        
+        <label for="Tname">Teacher First Name:</label>
+        <input required type="text" name="Tname">
+        
+        <label for="Tsurname">Teacher Last Name:</label>
+        <input required type="text" name="Tsurname">
+        
+        <label for="Taddress">Teacher Address:</label>
+        <textarea required name="Taddress" cols="50" rows="10"></textarea>
+        
+        <label for="Tmobile">Teacher Mobile:</label>
+        <input required type="tel" name="Tmobile">
+        
+        <label for="Temail">Teacher Email:</label>
+        <input required type="email" name="Temail" />
+    </form>
+    ```
+  </Step>
+  
+  <Step title="Enter teacher information">
+    - **Bonus Amount** (`bonus_amount`): Optional monetary bonus
+    - **Teacher Field** (`teacher_field`): Subject or area of specialization (required)
+    - **Teacher First Name** (`Tname`): First name (required)
+    - **Teacher Last Name** (`Tsurname`): Last name (required)
+    - **Teacher Address** (`Taddress`): Full residential address (required)
+    - **Teacher Mobile** (`Tmobile`): Contact phone number (required)
+    - **Teacher Email** (`Temail`): Email address (required)
+  </Step>
+  
+  <Step title="Submit the teacher record">
+    Click Submit to insert the teacher into the database.
+  </Step>
+</Steps>
+
+<Note>
+The email field uses HTML5 validation to ensure a properly formatted email address. The mobile field expects a telephone number format.
+</Note>
+
+### Database Insertion
+
+The `AddTeacher.php` script executes:
+
+```php
+$sql = "INSERT INTO Teacher (bonus_amount,teacher_field,Tname,Tsurname,Taddress,Tmobile,Temail) 
+        VALUES ('$bonus_amount','$teacher_field','$Tname','$Tsurname','$Taddress','$Tmobile','$Temail')";
+```
+
+## Adding a Parent
+
+Parent records can be added via `AddParent.html`.
+
+<Steps>
+  <Step title="Fill parent form">
+    ```html
+    <form method="post" action="AddParent.php">
+        <label for="Pname">Parent First Name:</label>
+        <input required type="text" name="Pname">
+        
+        <label for="Psurname">Parent Last Name:</label>
+        <input required type="text" name="Psurname">
+        
+        <label for="Paddress">Parent Address</label>
+        <textarea required name="Paddress" cols="50" rows="10"></textarea>
+        
+        <label for="Pemail">Parent Email:</label>
+        <input type="email" name="Pemail">
+    </form>
+    ```
+  </Step>
+  
+  <Step title="Enter parent details">
+    - **Parent First Name** (`Pname`): Required
+    - **Parent Last Name** (`Psurname`): Required
+    - **Parent Address** (`Paddress`): Full address (required)
+    - **Parent Email** (`Pemail`): Optional contact email
+  </Step>
+  
+  <Step title="Submit to create parent record">
+    The data is inserted into the Parent table.
+  </Step>
+</Steps>
+
+## Adding a Class
+
+Classes can be created through `AddClass.html`.
+
+<Steps>
+  <Step title="Complete class form">
+    ```html
+    <form method="post" action="AddClass.php">
+        <label for="classYear">Class Name:</label>
+        <input required type="text" name="classYear">
+        
+        <label for="capacity">Class Capacity:</label>
+        <input required type="number" min="1" name="capacity">
+        
+        <label for="Teacher_ID">Teacher ID:</label>
+        <input type="text" required name="Teacher_ID">
+    </form>
+    ```
+  </Step>
+  
+  <Step title="Provide class details">
+    - **Class Name** (`classYear`): Name or identifier for the class
+    - **Class Capacity** (`capacity`): Maximum number of students (minimum 1)
+    - **Teacher ID** (`Teacher_ID`): ID of the assigned teacher
+  </Step>
+  
+  <Step title="Submit the class">
+    Creates a new class record in the database.
+  </Step>
+</Steps>
+
+<Warning>
+Ensure the Teacher ID you enter already exists in the Teacher table before creating the class.
+</Warning>
+
+## Adding a Salary Record
+
+Salary information can be added through `AddSalary.html`.
+
+<Steps>
+  <Step title="Fill salary form">
+    ```html
+    <form method="post" action="AddSalary.php">
+        <label for="Teacher_ID">Teacher ID:</label>
+        <input required type="text" name="Teacher_ID">
+        
+        <label for="salary_amount">Salary amount:</label>
+        <input required type="text" name="salary_amount">
+        
+        <label for="workingTimes">Select working type:</label>
+        <select required name="workingTimes">
+            <option value="partTime">Part-Time</option>
+            <option value="fullTime">Full-Time</option>
+        </select>
+    </form>
+    ```
+  </Step>
+  
+  <Step title="Enter salary information">
+    - **Teacher ID** (`Teacher_ID`): The teacher receiving this salary
+    - **Salary Amount** (`salary_amount`): The monetary amount
+    - **Working Type** (`workingTimes`): Select either Part-Time or Full-Time
+  </Step>
+  
+  <Step title="Submit the salary record">
+    The salary is associated with the specified teacher.
+  </Step>
+</Steps>
+
+## Success and Error Messages
+
+After submitting any add form, the system displays:
+
+- **Success**: "New record created successfully"
+- **Error**: "Error adding record"
+
+<Info>
+If you encounter an error, verify that:
+- All required fields are filled
+- Foreign key references (Parent_ID, Class_ID, Teacher_ID) exist in their respective tables
+- Date formats are correct
+- Email and phone formats are valid
+</Info>
+
+## Database Connection
+
+All add operations connect to the MySQL database using:
+
+```php
+$link = mysqli_connect(
+    "sdb-57.hosting.stackcp.net", 
+    "student84-353031351c89", 
+    "ua92-studentAc", 
+    "student84-353031351c89"
+);
+
+if ($link === false) {
+    die("Connection failed: ");
+}
+```
+
+<Note>
+The system uses the `mysqli_connect()` function to establish a connection with the MySQL server and returns the connection as an object for all database operations.
+</Note>

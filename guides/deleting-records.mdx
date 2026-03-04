@@ -1,0 +1,463 @@
+---
+title: Deleting Records
+description: Learn how to safely delete records from the Primary School Management System including students, teachers, parents, classes, gym members, and salaries.
+---
+
+## Overview
+
+The Primary School Management System provides deletion functionality for all record types. Delete operations permanently remove records from the database based on their unique ID. This is a destructive operation that cannot be undone.
+
+<Warning>
+Deleting records is permanent and irreversible. Always verify the record ID before confirming deletion, especially for records that have relationships with other tables.
+</Warning>
+
+## Accessing Delete Forms
+
+<Steps>
+  <Step title="Navigate to the Delete menu">
+    From the navigation bar, click on the **Delete** dropdown button.
+  </Step>
+  
+  <Step title="Select record type">
+    Choose the type of record you want to delete:
+    - Student
+    - Parent
+    - Teacher
+    - Class
+    - Gym Member
+    - Salary
+  </Step>
+  
+  <Step title="Enter the record ID">
+    Provide the unique ID of the record you want to delete.
+  </Step>
+  
+  <Step title="Confirm deletion">
+    Submit the form to permanently remove the record.
+  </Step>
+</Steps>
+
+## Deleting a Student
+
+To delete a student record, navigate to `DeleteStudent.html`.
+
+### Delete Student Form
+
+The student deletion form is simple and requires only the Student ID:
+
+```html
+<h1>Delete Student Page.</h1>
+
+<form method="post" action="DeleteStudent.php">
+    <label>Type ID of student to be deleted.</label>
+    <input type="text" name="Sid">
+    <input type="submit" name="submit" value="Delete.">
+</form>
+```
+
+<Steps>
+  <Step title="Find the Student ID">
+    Before deleting, navigate to View > Student to find the ID (`Sid`) of the student you want to remove. Make note of the student's details to confirm you have the correct ID.
+  </Step>
+  
+  <Step title="Enter the ID">
+    In the delete form, type the Student ID in the text field.
+  </Step>
+  
+  <Step title="Click Delete">
+    Click the "Delete." button to remove the student from the database.
+  </Step>
+</Steps>
+
+### Backend Delete Logic
+
+The `DeleteStudent.php` script executes the deletion:
+
+```php
+$connection = mysqli_connect(
+    "sdb-57.hosting.stackcp.net",
+    "student84-353031351c89",
+    "ua92-studentAc",
+    "student84-353031351c89"
+);
+
+if ($connection === false) {
+    die("Connection failed: ");
+}
+
+if (isset($_POST['submit'])) {
+    $Sid = $_POST['Sid'];
+    
+    $delete = "DELETE FROM Student1 WHERE Sid=$Sid";
+    
+    if (mysqli_query($connection, $delete)) {
+        echo "Record has been deleted.";
+    } else {
+        echo "Error deleting record.";
+    }
+}
+```
+
+<Info>
+The DELETE statement uses the WHERE clause to target a specific record by its ID. The query removes only the student with the matching `Sid` from the `Student1` table.
+</Info>
+
+### Example Student Deletion
+
+To delete student with ID 12:
+
+1. Navigate to Delete > Student
+2. Enter: `12` in the ID field
+3. Click "Delete."
+4. System executes: `DELETE FROM Student1 WHERE Sid=12`
+5. Displays: "Record has been deleted."
+
+<Warning>
+Deleting a student who has associated records (like grades or attendance) may cause data integrity issues if those tables reference the student ID.
+</Warning>
+
+## Deleting a Teacher
+
+Teacher records can be deleted through `DeleteTeacher.html`.
+
+### Teacher Deletion Process
+
+<Steps>
+  <Step title="Verify teacher can be deleted">
+    Check if the teacher is assigned to any classes by viewing the class list. If the teacher is currently assigned to classes, you may need to reassign those classes first or update them.
+  </Step>
+  
+  <Step title="Get Teacher ID">
+    Find the Teacher ID from View > Teacher.
+  </Step>
+  
+  <Step title="Access delete form">
+    Navigate to Delete > Teacher.
+  </Step>
+  
+  <Step title="Enter Teacher ID and submit">
+    Type the Teacher ID and click the delete button.
+  </Step>
+</Steps>
+
+<Warning>
+Before deleting a teacher, ensure they are not referenced by:
+- Class records (Teacher_ID)
+- Salary records (Teacher_ID)
+- Any other tables with foreign key relationships
+</Warning>
+
+## Deleting a Parent
+
+Parent records can be removed via `DeleteParent.html`.
+
+### Parent Deletion Considerations
+
+<Steps>
+  <Step title="Check for dependent students">
+    Before deleting a parent, verify that no students are currently linked to this Parent ID. Deleting a parent while students reference them may cause database errors or orphaned student records.
+  </Step>
+  
+  <Step title="Navigate to delete form">
+    Go to Delete > Parent.
+  </Step>
+  
+  <Step title="Enter Parent ID">
+    Type the Parent ID to delete.
+  </Step>
+  
+  <Step title="Confirm deletion">
+    Submit the form to remove the parent record.
+  </Step>
+</Steps>
+
+<Warning>
+If students are linked to this parent (via `Parent_ID` in the Student table), deleting the parent may violate foreign key constraints or leave students without guardian information.
+</Warning>
+
+## Deleting a Class
+
+Class records can be deleted through `DeleteClass.html`.
+
+### Class Deletion Process
+
+<Info>
+Deleting a class that has students assigned to it may cause issues. Consider updating students to a different class before deleting.
+</Info>
+
+<Steps>
+  <Step title="Review class enrollment">
+    Check View > Student to see if any students are assigned to this Class ID.
+  </Step>
+  
+  <Step title="Reassign students if needed">
+    If students are enrolled, either reassign them to another class or remove the Class_ID association.
+  </Step>
+  
+  <Step title="Delete the class">
+    Navigate to Delete > Class, enter the Class ID, and submit.
+  </Step>
+</Steps>
+
+## Deleting Gym Members
+
+Gym member records can be deleted via `DeleteGymMember.html`.
+
+### Gym Member Deletion
+
+<Steps>
+  <Step title="Find Gym Member ID">
+    View the gym members list to identify the record to delete.
+  </Step>
+  
+  <Step title="Access delete form">
+    Go to Delete > Gym from the navigation menu.
+  </Step>
+  
+  <Step title="Enter ID and delete">
+    Provide the gym member ID and submit the deletion.
+  </Step>
+</Steps>
+
+## Deleting Salary Records
+
+Salary information can be removed through `DeleteSalary.html`.
+
+### Salary Deletion Process
+
+<Steps>
+  <Step title="Identify salary record">
+    Find the salary record ID from View > Salary.
+  </Step>
+  
+  <Step title="Access delete form">
+    Navigate to Delete > Salary.
+  </Step>
+  
+  <Step title="Remove salary record">
+    Enter the record ID and submit to delete.
+  </Step>
+</Steps>
+
+<Note>
+Deleting salary records does not delete the associated teacher. It only removes the salary information for that teacher.
+</Note>
+
+## How Delete Operations Work
+
+All delete operations follow the same pattern:
+
+<Steps>
+  <Step title="Database connection established">
+    PHP connects to the MySQL database:
+    
+    ```php
+    $connection = mysqli_connect(
+        "sdb-57.hosting.stackcp.net",
+        "student84-353031351c89",
+        "ua92-studentAc",
+        "student84-353031351c89"
+    );
+    
+    if ($connection === false) {
+        die("Connection failed: ");
+    }
+    ```
+  </Step>
+  
+  <Step title="Form submission verified">
+    The script checks if the delete form was submitted:
+    
+    ```php
+    if (isset($_POST['submit'])) {
+        // Process deletion
+    }
+    ```
+  </Step>
+  
+  <Step title="ID retrieved from POST data">
+    The record ID is extracted from the form submission:
+    
+    ```php
+    $Sid = $_POST['Sid'];
+    ```
+  </Step>
+  
+  <Step title="DELETE query constructed">
+    An SQL DELETE statement is built:
+    
+    ```php
+    $delete = "DELETE FROM TableName WHERE id=$id";
+    ```
+  </Step>
+  
+  <Step title="Query executed and feedback provided">
+    The deletion is executed and results are displayed:
+    
+    ```php
+    if (mysqli_query($connection, $delete)) {
+        echo "Record has been deleted.";
+    } else {
+        echo "Error deleting record.";
+    }
+    ```
+  </Step>
+</Steps>
+
+## Success and Error Messages
+
+After attempting to delete a record:
+
+- **Success**: "Record has been deleted."
+- **Error**: "Error deleting record."
+
+<Info>
+An error message typically indicates that the record ID doesn't exist, or there's a database constraint preventing deletion (such as foreign key relationships).
+</Info>
+
+## The DELETE Statement
+
+The SQL syntax used for deletions:
+
+```sql
+DELETE FROM table_name WHERE condition;
+```
+
+### Example Queries
+
+```sql
+-- Delete a specific student
+DELETE FROM Student1 WHERE Sid=5;
+
+-- Delete a specific teacher
+DELETE FROM Teacher WHERE Teacher_ID=3;
+
+-- Delete a specific parent
+DELETE FROM Parent WHERE Parent_ID=7;
+```
+
+<Warning>
+The WHERE clause is critical in DELETE statements. Without it, all records in the table would be deleted. Always specify which record to delete using its unique ID.
+</Warning>
+
+## Best Practices for Deletion
+
+<Steps>
+  <Step title="Always verify before deleting">
+    Use the View pages to confirm the record details before deletion. Make sure you have the correct ID and are deleting the intended record.
+  </Step>
+  
+  <Step title="Check for dependencies">
+    Before deleting records that other tables reference (like Parent, Teacher, or Class), check if any dependent records exist:
+    
+    - Before deleting a Parent: Check if students reference this Parent_ID
+    - Before deleting a Teacher: Check if classes or salaries reference this Teacher_ID
+    - Before deleting a Class: Check if students are assigned to this Class_ID
+  </Step>
+  
+  <Step title="Consider soft deletion">
+    For critical records, consider implementing a soft delete (marking as inactive) instead of permanently removing the data. This requires modifying the source code to add an "active" flag.
+  </Step>
+  
+  <Step title="Maintain backups">
+    Regularly backup your database before performing deletion operations, especially bulk deletions.
+  </Step>
+  
+  <Step title="Document deletions">
+    For audit purposes, keep a log of what was deleted, when, and why—especially for sensitive data like student or financial records.
+  </Step>
+</Steps>
+
+## Common Deletion Scenarios
+
+### Removing a Student Who Transferred
+
+When a student transfers to another school:
+
+1. View > Student to confirm student details and ID
+2. Delete > Student
+3. Enter the Student ID
+4. Submit deletion
+
+### Removing a Retired Teacher
+
+When a teacher retires:
+
+1. Check View > Class to see if the teacher is assigned to any classes
+2. Reassign those classes to other teachers using Update > Class
+3. Check View > Salary for any salary records
+4. Delete salary records first via Delete > Salary
+5. Finally, delete the teacher via Delete > Teacher
+
+### Cleaning Up Test Data
+
+To remove test records:
+
+1. Identify test record IDs from View pages
+2. Delete records in reverse dependency order:
+   - Delete Students first (they depend on Parents and Classes)
+   - Delete Salaries (they depend on Teachers)
+   - Delete Classes (they depend on Teachers)
+   - Delete Parents and Teachers last
+
+## Troubleshooting Deletions
+
+If deletion fails:
+
+<Steps>
+  <Step title="Verify ID exists">
+    Check that the record ID you're trying to delete actually exists. Use View pages to confirm.
+  </Step>
+  
+  <Step title="Check foreign key constraints">
+    The deletion may fail if other records reference this ID. For example:
+    - Can't delete a Parent if students reference that Parent_ID
+    - Can't delete a Teacher if classes or salaries reference that Teacher_ID
+  </Step>
+  
+  <Step title="Remove dependencies first">
+    Delete or update dependent records before deleting the parent record.
+  </Step>
+  
+  <Step title="Check database permissions">
+    Ensure the database user has DELETE privileges on the tables.
+  </Step>
+</Steps>
+
+## Cascading Deletes
+
+<Warning>
+The system does not appear to use CASCADE DELETE constraints. This means:
+- Deleting a parent won't automatically delete related students
+- Deleting a teacher won't automatically delete related classes or salaries
+- You must manually manage these relationships
+</Warning>
+
+To properly delete records with dependencies:
+
+1. Identify all dependent records
+2. Delete from the most dependent tables first
+3. Work your way up to the parent table
+4. Delete the main record last
+
+## Recovery from Accidental Deletion
+
+Since deletions are permanent:
+
+<Steps>
+  <Step title="Restore from backup">
+    The only way to recover deleted records is from a database backup. This is why regular backups are critical.
+  </Step>
+  
+  <Step title="Re-enter data manually">
+    If no backup exists, you'll need to manually re-enter the deleted information using the Add forms.
+  </Step>
+  
+  <Step title="Implement safeguards">
+    Consider modifying the delete forms to include a confirmation prompt: "Are you sure you want to delete this record?"
+  </Step>
+</Steps>
+
+<Note>
+The current system does not include confirmation dialogs before deletion. The record is deleted immediately upon form submission. Consider adding JavaScript confirmation prompts for additional safety.
+</Note>

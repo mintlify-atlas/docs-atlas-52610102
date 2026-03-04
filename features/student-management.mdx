@@ -1,0 +1,235 @@
+---
+title: Student Management
+description: Manage student enrollment, tracking, and assignments to parents and classes
+---
+
+The Student Management feature allows administrators to enroll new students, track their information, and maintain relationships with their parents and assigned classes.
+
+## Overview
+
+Student records form the core of the school management system. Each student is linked to a parent and assigned to a class, creating a comprehensive network of relationships within the school.
+
+<Card title="Key Features" icon="user-graduate">
+  - Add new student enrollments with personal information
+  - View all student records in a centralized table
+  - Update student information including name and birthday
+  - Delete student records when needed
+  - Link students to their parents and classes
+</Card>
+
+## Student Information Fields
+
+The system tracks the following information for each student:
+
+<ParamField path="Sid" type="number" required>
+  Unique student identifier (auto-generated)
+</ParamField>
+
+<ParamField path="Sname" type="text" required>
+  Student's first name
+</ParamField>
+
+<ParamField path="Ssurname" type="text" required>
+  Student's last name
+</ParamField>
+
+<ParamField path="Sbirthday" type="date" required>
+  Student's date of birth (maximum date: 2023-04-06)
+</ParamField>
+
+<ParamField path="Parent_ID" type="text" required>
+  Reference to the student's parent record
+</ParamField>
+
+<ParamField path="Class_ID" type="text" required>
+  Reference to the student's assigned class
+</ParamField>
+
+## User Workflows
+
+<Tabs>
+  <Tab title="Add Student">
+    ### Adding a New Student
+
+    To enroll a new student in the system:
+
+    1. Navigate to the **Add** dropdown menu in the main navigation
+    2. Select **Student** from the dropdown
+    3. Fill in the student enrollment form with the following required fields:
+
+    ```html
+    <form method="post" action="AddStudent.php">
+        <label for="Sname">Student Name:*</label>
+        <input type="text" required name="Sname"><br /><br />
+        
+        <label for="Ssurname">Student Lastname:*</label>
+        <input type="text" required name="Ssurname"><br /><br />
+        
+        <label for="Sbirthday">Student Birthday:*</label>
+        <input type="date" required max="2023-04-06" name="Sbirthday" /><br /><br />
+        
+        <label for="Parent_ID">Parent ID:* </label>
+        <input type="text" required name="Parent_ID"><br><br>
+        
+        <label for="Class_ID">Class ID:*</label>
+        <input type="text" required name="Class_ID"><br>
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    4. Click the **Submit** button to create the student record
+
+    <Note>
+      You must have a valid Parent ID and Class ID before adding a student. Create parent and class records first if they don't exist.
+    </Note>
+
+  </Tab>
+
+  <Tab title="View Students">
+    ### Viewing All Students
+
+    To view the complete list of enrolled students:
+
+    1. Click the **View** dropdown in the navigation bar
+    2. Select **Student** to display the student table
+
+    The student table displays the following columns:
+
+    | Column | Width | Description |
+    |--------|-------|-------------|
+    | Student ID | 150px | Unique identifier |
+    | Student First Name | 250px | First name |
+    | Student Last Name | 250px | Last name |
+    | Student Birthday | 120px | Date of birth |
+    | Student's Parent ID | 100px | Linked parent |
+    | Student's Class ID | 100px | Assigned class |
+
+    **SQL Query Used:**
+    ```sql
+    SELECT Sid, Sname, Ssurname, Sbirthday, Parent_ID, Class_ID 
+    FROM Student1
+    ```
+
+  </Tab>
+
+  <Tab title="Update Student">
+    ### Updating Student Information
+
+    To modify an existing student's information:
+
+    1. Go to the **Uptade** dropdown menu
+    2. Select **Student**
+    3. Enter the student details in the update form:
+
+    ```html
+    <form method="post" action="UptadeStudent.php">
+        <label for="Sid">Student ID:</label>
+        <input required type="text" name="Sid" /><br /><br />
+        
+        <label for="Sname">Student Name:</label>
+        <input required type="text" name="Sname"><br /><br />
+        
+        <label for="Ssurname">Student Surname: </label>
+        <input required type="text" name="Ssurname"><br><br>
+        
+        <label for="Sbirthday">Student's New Birthday</label>
+        <input type="date" max="2023-04-06" name="Sbirthday" />
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    4. Click **Submit** to save the changes
+
+    <Warning>
+      You must provide the Student ID to identify which record to update.
+    </Warning>
+
+  </Tab>
+
+  <Tab title="Delete Student">
+    ### Deleting a Student Record
+
+    To remove a student from the system:
+
+    1. Navigate to **Delete** > **Student**
+    2. Enter the Student ID in the deletion form:
+
+    ```html
+    <form method="post" action="DeleteStudent.php">
+        <label>Type ID of student to be deleted.</label>
+        <input type="text" name="Sid"><br><br>
+        <input type="submit" name="submit" value="Delete.">
+    </form>
+    ```
+
+    3. Click the **Delete** button to permanently remove the record
+
+    <Warning>
+      Deleting a student is permanent and cannot be undone. Ensure you have the correct Student ID before proceeding.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Relationships
+
+<Accordion title="Parent Relationship">
+  Each student must be linked to a parent record via the `Parent_ID` field. This establishes the parent-child relationship in the system.
+
+  - Students cannot be added without a valid Parent ID
+  - Multiple students can share the same Parent ID (siblings)
+  - Refer to the [Parent Management](/features/parent-management) documentation for creating parent records
+</Accordion>
+
+<Accordion title="Class Assignment">
+  Students are assigned to classes through the `Class_ID` field, which determines their classroom placement and teacher.
+
+  - Every student must be assigned to a class
+  - The Class ID links to the Class table, which contains teacher assignments
+  - See [Class Management](/features/class-management) for more information
+</Accordion>
+
+## Database Structure
+
+The student data is stored in the `Student1` table with the following schema:
+
+```sql
+Table: Student1
+Fields:
+  - Sid (Primary Key, Auto-increment)
+  - Sname (VARCHAR, Required)
+  - Ssurname (VARCHAR, Required)
+  - Sbirthday (DATE, Required)
+  - Parent_ID (Foreign Key to Parent table)
+  - Class_ID (Foreign Key to Class table)
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Data Entry" icon="keyboard">
+    - Always verify parent and class records exist before adding students
+    - Double-check birthdates for accuracy
+    - Use consistent naming conventions
+  </Card>
+
+  <Card title="Record Management" icon="database">
+    - Keep student records up to date
+    - Remove graduated students or archive them
+    - Maintain accurate parent linkages
+  </Card>
+
+  <Card title="Data Validation" icon="shield-check">
+    - Birthdate cannot be after April 6, 2023
+    - All fields except the auto-generated ID are required
+    - Parent and Class IDs must reference existing records
+  </Card>
+
+  <Card title="Security" icon="lock">
+    - Only authorized administrators should access student data
+    - Protect sensitive student information
+    - Follow data privacy regulations
+  </Card>
+</CardGroup>

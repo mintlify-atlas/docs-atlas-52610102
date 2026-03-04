@@ -1,0 +1,614 @@
+---
+title: 'Forms Reference'
+description: 'Complete documentation of all HTML forms in the Primary School Management System'
+icon: 'rectangle-list'
+---
+
+## Overview
+
+The Primary School Management System uses HTML forms with POST method to collect data for various entities. All forms are submitted to corresponding PHP files for processing and database insertion.
+
+---
+
+## Student Management Forms
+
+<Tabs>
+  <Tab title="Add Student">
+    ### Add Student Form
+    
+    **File:** `AddStudent.html`  
+    **Action:** `AddStudent.php`  
+    **Method:** POST
+    
+    <ParamField body="Sname" type="text" required>
+      Student's first name
+    </ParamField>
+    
+    <ParamField body="Ssurname" type="text" required>
+      Student's last name
+    </ParamField>
+    
+    <ParamField body="Sbirthday" type="date" required>
+      Student's date of birth (maximum date: 2023-04-06)
+    </ParamField>
+    
+    <ParamField body="Parent_ID" type="text" required>
+      ID of the parent associated with this student
+    </ParamField>
+    
+    <ParamField body="Class_ID" type="text" required>
+      ID of the class the student is enrolled in
+    </ParamField>
+    
+    <CodeGroup>
+    ```html Form Structure
+    <form method="post" action="AddStudent.php">
+      <label for="Sname">Student Name:*</label>
+      <input type="text" required name="Sname">
+      
+      <label for="Ssurname">Student Lastname:*</label>
+      <input type="text" required name="Ssurname">
+      
+      <label for="Sbirthday">Student Birthday:*</label>
+      <input type="date" required max="2023-04-06" name="Sbirthday" />
+      
+      <label for="Parent_ID">Parent ID:*</label>
+      <input type="text" required name="Parent_ID">
+      
+      <label for="Class_ID">Class ID:*</label>
+      <input type="text" required name="Class_ID">
+      
+      <input type="submit" name="submit">
+    </form>
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Student">
+    ### Update Student Form
+    
+    **File:** `UptadeStudent.html`  
+    **Action:** `UptadeStudent.php`  
+    **Method:** POST
+    
+    <ParamField body="Sid" type="text" required>
+      Unique identifier of the student to update
+    </ParamField>
+    
+    <ParamField body="Sname" type="text" required>
+      Updated first name for the student
+    </ParamField>
+    
+    <ParamField body="Ssurname" type="text" required>
+      Updated last name for the student
+    </ParamField>
+    
+    <ParamField body="Sbirthday" type="date">
+      Updated date of birth (maximum date: 2023-04-06)
+    </ParamField>
+    
+    <Note>
+      This form requires the Student ID to identify which record to update.
+    </Note>
+  </Tab>
+  
+  <Tab title="Delete Student">
+    ### Delete Student Form
+    
+    **File:** `DeleteStudent.html`  
+    **Action:** `DeleteStudent.php`  
+    **Method:** POST
+    
+    <ParamField body="Sid" type="text" required>
+      ID of the student to delete from the system
+    </ParamField>
+    
+    <Warning>
+      Deleting a student is permanent and cannot be undone.
+    </Warning>
+  </Tab>
+</Tabs>
+
+---
+
+## Teacher Management Forms
+
+<Tabs>
+  <Tab title="Add Teacher">
+    ### Add Teacher Form
+    
+    **File:** `AddTeacher.html`  
+    **Action:** `AddTeacher.php`  
+    **Method:** POST
+    
+    <ParamField body="bonus_amount" type="text">
+      Optional bonus amount for the teacher
+    </ParamField>
+    
+    <ParamField body="teacher_field" type="text" required>
+      Subject or field the teacher specializes in
+    </ParamField>
+    
+    <ParamField body="Tname" type="text" required>
+      Teacher's first name
+    </ParamField>
+    
+    <ParamField body="Tsurname" type="text" required>
+      Teacher's last name
+    </ParamField>
+    
+    <ParamField body="Taddress" type="textarea" required>
+      Complete address of the teacher (50 columns × 10 rows)
+    </ParamField>
+    
+    <ParamField body="Tmobile" type="tel" required>
+      Teacher's mobile phone number
+    </ParamField>
+    
+    <ParamField body="Temail" type="email" required>
+      Teacher's email address
+    </ParamField>
+    
+    <CodeGroup>
+    ```html Form Structure
+    <form method="post" action="AddTeacher.php">
+      <label for="bonus_amount">Bonus Amount:</label>
+      <input type="text" name="bonus_amount" />
+      
+      <label for="teacher_field">Teacher Field</label>
+      <input required type="text" name="teacher_field" />
+      
+      <label for="Tname">Teacher First Name:</label>
+      <input required type="text" name="Tname">
+      
+      <label for="Tsurname">Teacher Last Name:</label>
+      <input required type="text" name="Tsurname">
+      
+      <label for="Taddress">Teacher Address:</label>
+      <textarea required name="Taddress" cols="50" rows="10"></textarea>
+      
+      <label for="Tmobile">Teacher Mobile:</label>
+      <input required type="tel" name="Tmobile">
+      
+      <label for="Temail">Teacher Email:</label>
+      <input required type="email" name="Temail" />
+      
+      <input type="submit" name="submit">
+    </form>
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Teacher">
+    ### Update Teacher Form
+    
+    **File:** `UptadeTeacher.html`  
+    **Action:** `UptadeTeacher.php`  
+    **Method:** POST
+    
+    Updates teacher information using Teacher_ID as the identifier. All fields from the Add Teacher form are available for updating.
+  </Tab>
+  
+  <Tab title="Delete Teacher">
+    ### Delete Teacher Form
+    
+    **File:** `DeleteTeacher.html`  
+    **Action:** `DeleteTeacher.php`  
+    **Method:** POST
+    
+    <ParamField body="Teacher_ID" type="text" required>
+      ID of the teacher to delete from the system
+    </ParamField>
+  </Tab>
+</Tabs>
+
+---
+
+## Parent Management Forms
+
+<Tabs>
+  <Tab title="Add Parent">
+    ### Add Parent Form
+    
+    **File:** `AddParent.html`  
+    **Action:** `AddParent.php`  
+    **Method:** POST
+    
+    <ParamField body="Pname" type="text" required>
+      Parent's first name
+    </ParamField>
+    
+    <ParamField body="Psurname" type="text" required>
+      Parent's last name
+    </ParamField>
+    
+    <ParamField body="Paddress" type="textarea" required>
+      Parent's complete address (50 columns × 10 rows)
+    </ParamField>
+    
+    <ParamField body="Pemail" type="email">
+      Parent's email address (optional)
+    </ParamField>
+    
+    <CodeGroup>
+    ```html Form Structure
+    <form method="post" action="AddParent.php">
+      <label for="Pname">Parent First Name:</label>
+      <input required type="text" name="Pname">
+      
+      <label for="Psurname">Parent Last Name:</label>
+      <input required type="text" name="Psurname">
+      
+      <label for="Paddress">Parent Address</label>
+      <textarea required name="Paddress" cols="50" rows="10"></textarea>
+      
+      <label for="Pemail">Parent Email:</label>
+      <input type="email" name="Pemail">
+      
+      <input type="submit" name="submit">
+    </form>
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Parent">
+    ### Update Parent Form
+    
+    **File:** `UptadeParent.html`  
+    **Action:** `UptadeParent.php`  
+    **Method:** POST
+    
+    Updates parent information using Parent_ID as the identifier.
+  </Tab>
+  
+  <Tab title="Delete Parent">
+    ### Delete Parent Form
+    
+    **File:** `DeleteParent.html`  
+    **Action:** `DeleteParent.php`  
+    **Method:** POST
+    
+    <ParamField body="Parent_ID" type="text" required>
+      ID of the parent to delete from the system
+    </ParamField>
+  </Tab>
+</Tabs>
+
+---
+
+## Class Management Forms
+
+<Tabs>
+  <Tab title="Add Class">
+    ### Add Class Form
+    
+    **File:** `AddClass.html`  
+    **Action:** `AddClass.php`  
+    **Method:** POST
+    
+    <ParamField body="classYear" type="text" required>
+      Name or year of the class (e.g., "Grade 3", "Year 5")
+    </ParamField>
+    
+    <ParamField body="capacity" type="number" required>
+      Maximum number of students the class can accommodate (minimum: 1)
+    </ParamField>
+    
+    <ParamField body="Teacher_ID" type="text" required>
+      ID of the teacher assigned to this class
+    </ParamField>
+    
+    <CodeGroup>
+    ```html Form Structure
+    <form method="post" action="AddClass.php">
+      <label for="classYear">Class Name:</label>
+      <input required type="text" name="classYear">
+      
+      <label for="capacity">Class Capacity:</label>
+      <input required type="number" min="1" name="capacity">
+      
+      <label for="Teacher_ID">Teacher ID:</label>
+      <input type="text" required name="Teacher_ID">
+      
+      <input type="submit" name="submit">
+    </form>
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Class">
+    ### Update Class Form
+    
+    **File:** `UptadeClass.html`  
+    **Action:** `UptadeClass.php`  
+    **Method:** POST
+    
+    Updates class information using Class_ID as the identifier.
+  </Tab>
+  
+  <Tab title="Delete Class">
+    ### Delete Class Form
+    
+    **File:** `DeleteClass.html`  
+    **Action:** `DeleteClass.php`  
+    **Method:** POST
+    
+    <ParamField body="Class_ID" type="text" required>
+      ID of the class to delete from the system
+    </ParamField>
+  </Tab>
+</Tabs>
+
+---
+
+## Salary Management Forms
+
+<Tabs>
+  <Tab title="Add Salary">
+    ### Add Salary Form
+    
+    **File:** `AddSalary.html`  
+    **Action:** `AddSalary.php`  
+    **Method:** POST
+    
+    <ParamField body="Teacher_ID" type="text" required>
+      ID of the teacher to assign salary to
+    </ParamField>
+    
+    <ParamField body="salary_amount" type="text" required>
+      Salary amount for the teacher
+    </ParamField>
+    
+    <ParamField body="workingTimes" type="select" required>
+      Working time type. Options:
+      - `partTime` - Part-Time
+      - `fullTime` - Full-Time
+    </ParamField>
+    
+    <CodeGroup>
+    ```html Form Structure
+    <form method="post" action="AddSalary.php">
+      <label for="Teacher_ID">Teacher ID:</label>
+      <input required type="text" name="Teacher_ID">
+      
+      <label for="salary_amount">Salary amount:</label>
+      <input required type="text" name="salary_amount">
+      
+      <label for="workingTimes">Select working type:</label>
+      <select required id="workingTimes" name="workingTimes">
+        <option value="partTime">Part-Time</option>
+        <option value="fullTime">Full-Time</option>
+      </select>
+      
+      <input type="submit" name="submit">
+    </form>
+    ```
+    </CodeGroup>
+  </Tab>
+  
+  <Tab title="Update Salary">
+    ### Update Salary Form
+    
+    **File:** `UptadeSalary.html`  
+    **Action:** `UptadeSalary.php`  
+    **Method:** POST
+    
+    Updates salary information using Salary_ID as the identifier.
+  </Tab>
+  
+  <Tab title="Delete Salary">
+    ### Delete Salary Form
+    
+    **File:** `DeleteSalary.html`  
+    **Action:** `DeleteSalary.php`  
+    **Method:** POST
+    
+    <ParamField body="Salary_ID" type="text" required>
+      ID of the salary record to delete
+    </ParamField>
+  </Tab>
+</Tabs>
+
+---
+
+## Gym Member Management Forms
+
+<Accordion title="Add Gym Member">
+  ### Add Gym Member Form
+  
+  **File:** `AddGymMember.php` (combined HTML + PHP)  
+  **Action:** `AddGymMember.php`  
+  **Method:** POST
+  
+  <ParamField body="Sid" type="text" required>
+    Student ID of the gym member
+  </ParamField>
+  
+  <ParamField body="gymFullName" type="text" required>
+    Full name of the gym member
+  </ParamField>
+  
+  <ParamField body="userRegDate" type="date" required>
+    Registration date for gym membership
+  </ParamField>
+  
+  <ParamField body="memberType" type="select" required>
+    Membership tier. Options:
+    - `bronzeMember` - Bronze (30 days validity)
+    - `silverMember` - Silver (60 days validity)
+    - `goldMember` - Gold (90 days validity)
+    - `diamondMember` - Diamond (180 days validity)
+  </ParamField>
+  
+  <ParamField body="medicalCondition" type="text">
+    Any medical conditions (optional)
+  </ParamField>
+  
+  <Info>
+    The system automatically calculates membership expiration date based on the selected member type.
+  </Info>
+  
+  <CodeGroup>
+  ```html Form Structure
+  <form method="post" action="AddGymMember.php">
+    <label for="Sid">Student ID:</label>
+    <input required type="text" name="Sid" />
+    
+    <label for="gymFullName">Enter full name:</label>
+    <input required type="text" name="gymFullName">
+    
+    <label for="userRegDate">Register Date:</label>
+    <input required type="date" name="userRegDate">
+    
+    <label for="memberType">Member Type:</label>
+    <select required id="memberType" name="memberType">
+      <option value="bronzeMember">Bronze</option>
+      <option value="silverMember">Silver</option>
+      <option value="goldMember">Gold</option>
+      <option value="diamondMember">Diamond</option>
+    </select>
+    
+    <label for="medicalCondition">Medical Condition (if there're any)</label>
+    <input type="text" name="medicalCondition">
+    
+    <input type="submit" name="submit">
+  </form>
+  ```
+  </CodeGroup>
+</Accordion>
+
+<Accordion title="Update Gym Member">
+  ### Update Gym Member Form
+  
+  **File:** `UptadeGym.html`  
+  **Action:** `UptadeGym.php`  
+  **Method:** POST
+  
+  Updates gym member information using gymMemberID as the identifier.
+</Accordion>
+
+<Accordion title="Delete Gym Member">
+  ### Delete Gym Member Form
+  
+  **File:** `DeleteGymMember.html`  
+  **Action:** `DeleteGymMember.php`  
+  **Method:** POST
+  
+  <ParamField body="gymMemberID" type="text" required>
+    ID of the gym member to delete
+  </ParamField>
+</Accordion>
+
+---
+
+## Contact Form
+
+### Contact Us Form
+
+**File:** `Contact.html`  
+**Action:** `Contact.php`  
+**Method:** POST
+
+This form allows users to submit inquiries or feedback to the school administration.
+
+<ParamField body="contactName" type="text" required>
+  Name of the person submitting the contact form
+</ParamField>
+
+<ParamField body="returnContact" type="email">
+  Email address for response (optional)
+</ParamField>
+
+<ParamField body="message" type="textarea" required>
+  Message or inquiry content (12 rows × 80 columns)
+</ParamField>
+
+<CodeGroup>
+```html Form Structure
+<form method="post" action="Contact.php">
+  <label for="contactName">Name:</label>
+  <input type="text" name="contactName" required>
+  
+  <label for="returnContact">Return contact email (optional):</label>
+  <input type="email" name="returnContact">
+  
+  <label for="message">Message:</label>
+  <textarea name="message" rows="12" cols="80" required></textarea>
+  
+  <input type="submit" name="submit">
+</form>
+```
+</CodeGroup>
+
+---
+
+## Form Validation
+
+<CardGroup cols={2}>
+  <Card title="HTML5 Validation" icon="shield-check">
+    All forms use HTML5 `required` attribute for mandatory fields
+  </Card>
+  
+  <Card title="Input Types" icon="keyboard">
+    Forms utilize appropriate input types (`email`, `tel`, `date`, `number`) for better UX
+  </Card>
+  
+  <Card title="Date Constraints" icon="calendar">
+    Date fields include max attribute to prevent future dates where applicable
+  </Card>
+  
+  <Card title="Number Constraints" icon="hashtag">
+    Number fields include min attribute to enforce positive values
+  </Card>
+</CardGroup>
+
+---
+
+## Common Form Patterns
+
+<Steps>
+  <Step title="User Input">
+    User fills out the form with required and optional fields
+  </Step>
+  
+  <Step title="HTML5 Validation">
+    Browser validates required fields and input types before submission
+  </Step>
+  
+  <Step title="Form Submission">
+    Form data is sent via POST method to the corresponding PHP file
+  </Step>
+  
+  <Step title="Server Processing">
+    PHP script processes the data and performs database operations
+  </Step>
+  
+  <Step title="Feedback">
+    User receives success or error message based on the operation result
+  </Step>
+</Steps>
+
+---
+
+## Form Security Considerations
+
+<Warning>
+  The current implementation has several security vulnerabilities:
+  
+  - No CSRF protection
+  - No input sanitization before database insertion
+  - SQL injection vulnerabilities (direct string concatenation in queries)
+  - No server-side validation
+  - Database credentials exposed in source code
+</Warning>
+
+<Tip>
+  **Recommended Improvements:**
+  
+  1. Implement prepared statements with parameterized queries
+  2. Add CSRF tokens to all forms
+  3. Sanitize and validate all user inputs on the server side
+  4. Move database credentials to environment variables
+  5. Implement proper error handling and logging
+  6. Add rate limiting for form submissions
+</Tip>

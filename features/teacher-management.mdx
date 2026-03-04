@@ -1,0 +1,300 @@
+---
+title: Teacher Management
+description: Manage teacher profiles, qualifications, contact information, and class assignments
+---
+
+The Teacher Management system maintains comprehensive profiles for all teaching staff, including their qualifications, contact details, and bonus compensation.
+
+## Overview
+
+Teacher records store essential information about faculty members, including their teaching specialization, contact information, and bonus amounts. Teachers are linked to classes and salary records.
+
+<Card title="Key Features" icon="chalkboard-teacher">
+  - Create detailed teacher profiles
+  - Track teaching specializations and qualifications
+  - Maintain contact information (address, mobile, email)
+  - Manage bonus compensation
+  - View all teacher records in a comprehensive table
+  - Update and delete teacher information
+</Card>
+
+## Teacher Information Fields
+
+The system captures the following information for each teacher:
+
+<ParamField path="Teacher_ID" type="number" required>
+  Unique teacher identifier (auto-generated)
+</ParamField>
+
+<ParamField path="bonus_amount" type="text">
+  Optional bonus compensation amount for the teacher
+</ParamField>
+
+<ParamField path="teacher_field" type="text" required>
+  Teaching specialization or field of expertise (e.g., Mathematics, English, Science)
+</ParamField>
+
+<ParamField path="Tname" type="text" required>
+  Teacher's first name
+</ParamField>
+
+<ParamField path="Tsurname" type="text" required>
+  Teacher's last name
+</ParamField>
+
+<ParamField path="Taddress" type="textarea" required>
+  Complete residential address (supports multi-line text up to 50 columns × 10 rows)
+</ParamField>
+
+<ParamField path="Tmobile" type="tel" required>
+  Teacher's mobile phone number
+</ParamField>
+
+<ParamField path="Temail" type="email" required>
+  Teacher's email address
+</ParamField>
+
+## User Workflows
+
+<Tabs>
+  <Tab title="Add Teacher">
+    ### Adding a New Teacher
+
+    To add a new teacher to the system:
+
+    1. Navigate to **Add** > **Teacher** in the main menu
+    2. Complete the teacher registration form:
+
+    ```html
+    <form method="post" action="AddTeacher.php">
+        <label for="bonus_amount">Bonus Amount :</label>
+        <input type="text" name="bonus_amount" /><br /><br />
+        
+        <label for="teacher_field">Teacher Field</label>
+        <input required type="text" name="teacher_field" /><br /><br />
+        
+        <label for="Tname">Teacher First Name:</label>
+        <input required type="text" name="Tname"><br /><br />
+        
+        <label for="Tsurname">Teacher Last Name:</label>
+        <input required type="text" name="Tsurname"><br /><br />
+        
+        <label for="Taddress">Teacher Address :</label><br />
+        <textarea required name="Taddress" id="Taddress" cols="50" rows="10"></textarea><br><br />
+        
+        <label for="Tmobile">Teacher Mobile :</label>
+        <input required type="tel" name="Tmobile"><br><br />
+        
+        <label for="Temail">Teacher Email :</label>
+        <input required type="email" name="Temail" />
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    3. Click **Submit** to create the teacher profile
+
+    <Note>
+      The bonus amount field is optional. All other fields are required to create a complete teacher profile.
+    </Note>
+
+  </Tab>
+
+  <Tab title="View Teachers">
+    ### Viewing All Teachers
+
+    To access the complete teacher directory:
+
+    1. Click **View** > **Teacher** from the navigation
+    2. Browse the teacher listing table
+
+    The teacher table includes these columns:
+
+    | Column | Width | Description |
+    |--------|-------|-------------|
+    | Teacher ID | 150px | Unique identifier |
+    | Teacher bonus amount | 250px | Bonus compensation |
+    | Teacher Field Name | 250px | Specialization area |
+    | Teacher First Name | 250px | First name |
+    | Teacher Last Name | 250px | Last name |
+    | Teacher Address | 250px | Residential address |
+    | Teacher Mobile | 150px | Phone number |
+    | Teacher Email | 150px | Email address |
+
+    **Data Retrieval Query:**
+    ```sql
+    SELECT Teacher_ID, bonus_amount, teacher_field, Tname, Tsurname, 
+           Taddress, Tmobile, Temail 
+    FROM Teacher
+    ```
+
+    <Tip>
+      The teacher table provides a comprehensive overview of all faculty members, making it easy to find contact information and specializations.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="Update Teacher">
+    ### Updating Teacher Information
+
+    To modify a teacher's profile:
+
+    1. Go to **Uptade** > **Teacher**
+    2. Fill in the update form with the teacher's ID and new information
+    3. Submit the changes
+
+    <Warning>
+      When updating teacher information, ensure the Teacher ID is correct to avoid modifying the wrong profile.
+    </Warning>
+
+  </Tab>
+
+  <Tab title="Delete Teacher">
+    ### Removing a Teacher
+
+    To delete a teacher from the system:
+
+    1. Navigate to **Delete** > **Teacher**
+    2. Enter the Teacher ID
+    3. Confirm deletion
+
+    <Warning>
+      Before deleting a teacher, ensure they are not assigned to any active classes or salary records. This may require updating class assignments first.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Contact Information Management
+
+<Accordion title="Address Input">
+  Teacher addresses are captured using a multi-line textarea field (50 columns × 10 rows), allowing for complete address details including:
+  
+  - Street address
+  - Apartment or unit number
+  - City
+  - State/Province
+  - Postal code
+  - Country (if applicable)
+  
+  This format accommodates international addresses and complex address structures.
+</Accordion>
+
+<Accordion title="Phone Number Validation">
+  The mobile field uses HTML5 `type="tel"` input, which:
+  
+  - Provides appropriate mobile keyboards on touch devices
+  - Accepts various phone number formats
+  - Requires a value for form submission
+  
+  Consider implementing additional validation for your region's phone number format.
+</Accordion>
+
+<Accordion title="Email Validation">
+  Email addresses are validated using HTML5 `type="email"`, which:
+  
+  - Ensures basic email format (contains @ symbol)
+  - Provides email-specific keyboard on mobile devices
+  - Prevents common email entry errors
+</Accordion>
+
+## Teaching Specializations
+
+The `teacher_field` stores the teacher's area of expertise. Common examples include:
+
+<CardGroup cols={3}>
+  <Card title="Core Subjects">
+    - Mathematics
+    - English Language
+    - Science
+    - Social Studies
+  </Card>
+
+  <Card title="Languages">
+    - Foreign Languages
+    - ESL
+    - Native Language Arts
+  </Card>
+
+  <Card title="Specialized">
+    - Physical Education
+    - Art
+    - Music
+    - Computer Science
+  </Card>
+</CardGroup>
+
+## Bonus Compensation
+
+The bonus amount field allows tracking of additional compensation for teachers who:
+
+- Take on extra responsibilities
+- Lead special programs
+- Achieve performance milestones
+- Serve in administrative roles
+- Coach sports or extracurricular activities
+
+<Note>
+  Bonus amounts are stored as text to accommodate various formats (currency symbols, decimal places). Consider standardizing the format for consistency.
+</Note>
+
+## Relationships
+
+<Accordion title="Class Assignment">
+  Teachers are assigned to classes via the `Teacher_ID` field in the Class table. One teacher can be assigned to multiple classes.
+  
+  See [Class Management](/features/class-management) for details on class assignments.
+</Accordion>
+
+<Accordion title="Salary Records">
+  Teacher compensation is tracked in the Salary table using the `Teacher_ID` reference. This links base salary and working hours to teacher profiles.
+  
+  Refer to [Salary Management](/features/salary-management) for payroll information.
+</Accordion>
+
+## Database Structure
+
+```sql
+Table: Teacher
+Fields:
+  - Teacher_ID (Primary Key, Auto-increment)
+  - bonus_amount (VARCHAR, Optional)
+  - teacher_field (VARCHAR, Required)
+  - Tname (VARCHAR, Required)
+  - Tsurname (VARCHAR, Required)
+  - Taddress (TEXT, Required)
+  - Tmobile (VARCHAR, Required)
+  - Temail (VARCHAR, Required)
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Data Quality" icon="check-circle">
+    - Keep contact information current
+    - Verify email addresses are active
+    - Update addresses promptly when teachers relocate
+    - Standardize phone number formats
+  </Card>
+
+  <Card title="Teaching Fields" icon="book">
+    - Use consistent naming for specializations
+    - Consider using a dropdown for common fields
+    - Document any special certifications
+    - Track multiple specializations if applicable
+  </Card>
+
+  <Card title="Privacy & Security" icon="user-shield">
+    - Protect personal contact information
+    - Limit access to authorized personnel
+    - Follow employment data regulations
+    - Secure email communications
+  </Card>
+
+  <Card title="Record Maintenance" icon="tasks">
+    - Review teacher records annually
+    - Archive records for departed teachers
+    - Update bonus amounts as needed
+    - Maintain accurate teaching assignments
+  </Card>
+</CardGroup>

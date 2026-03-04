@@ -1,0 +1,341 @@
+---
+title: Class Management
+description: Create and organize classes with capacity limits and teacher assignments
+---
+
+The Class Management system allows administrators to create and organize classes, set capacity limits, and assign teachers to each class.
+
+## Overview
+
+Classes represent the organizational units where students are grouped for instruction. Each class has a name, capacity limit, and is assigned to a specific teacher.
+
+<Card title="Key Features" icon="school">
+  - Create new classes with custom names
+  - Set maximum student capacity per class
+  - Assign teachers to classes
+  - View all classes and their details
+  - Update class information and capacity
+  - Delete classes when no longer needed
+</Card>
+
+## Class Information Fields
+
+The system maintains the following information for each class:
+
+<ParamField path="Class_ID" type="number" required>
+  Unique class identifier (auto-generated)
+</ParamField>
+
+<ParamField path="classYear" type="text" required>
+  Class name or designation (e.g., "Grade 1A", "Year 2 Blue", "5th Grade Math")
+</ParamField>
+
+<ParamField path="capacity" type="number" required>
+  Maximum number of students allowed in the class (minimum value: 1)
+</ParamField>
+
+<ParamField path="Teacher_ID" type="text" required>
+  Reference to the teacher assigned to this class
+</ParamField>
+
+## User Workflows
+
+<Tabs>
+  <Tab title="Add Class">
+    ### Creating a New Class
+
+    To add a new class to the system:
+
+    1. Navigate to **Add** > **Class** in the main menu
+    2. Fill in the class creation form:
+
+    ```html
+    <form method="post" action="AddClass.php">
+        <label for="classYear">Class Name:</label>
+        <input required type="text" name="classYear"><br /><br />
+        
+        <label for="capacity">Class Capacity :</label>
+        <input required type="number" min="1" value="capacity" name="capacity"><br><br>
+        
+        <label for="Teacher_ID">Teacher ID :</label>
+        <input type="text" required name="Teacher_ID"><br>
+        
+        <input type="submit" name="submit">
+    </form>
+    ```
+
+    3. Click **Submit** to create the class
+
+    <Note>
+      Ensure the Teacher ID exists before creating the class. You can find Teacher IDs in the View > Teacher section.
+    </Note>
+
+  </Tab>
+
+  <Tab title="View Classes">
+    ### Viewing All Classes
+
+    To see the complete class listing:
+
+    1. Click **View** > **Class** in the navigation
+    2. Review the class information table
+
+    The class table displays:
+
+    | Column | Width | Description |
+    |--------|-------|-------------|
+    | Class ID | 150px | Unique identifier |
+    | Class Name | 250px | Class name/designation |
+    | Class Capacity | 170px | Maximum students |
+    | Teacher ID | 90px | Assigned teacher |
+
+    **Data Query:**
+    ```sql
+    SELECT Class_ID, classYear, capacity, Teacher_ID 
+    FROM Class
+    ```
+
+    <Tip>
+      Use the Class ID from this table when assigning students to classes in the Student Management section.
+    </Tip>
+
+  </Tab>
+
+  <Tab title="Update Class">
+    ### Updating Class Information
+
+    To modify class details:
+
+    1. Go to **Uptade** > **Class**
+    2. Enter the Class ID and new information
+    3. Submit the changes
+
+    Common updates include:
+    - Changing class capacity
+    - Reassigning to a different teacher
+    - Renaming the class
+
+    <Info>
+      When increasing capacity, ensure the classroom can physically accommodate more students. When decreasing, verify current enrollment is below the new limit.
+    </Info>
+
+  </Tab>
+
+  <Tab title="Delete Class">
+    ### Removing a Class
+
+    To delete a class from the system:
+
+    1. Navigate to **Delete** > **Class**
+    2. Enter the Class ID to delete
+    3. Confirm deletion
+
+    <Warning>
+      Before deleting a class, ensure no students are currently assigned to it. Check the Student Management section and reassign students to other classes first.
+    </Warning>
+
+  </Tab>
+</Tabs>
+
+## Class Naming Conventions
+
+<Accordion title="Grade-Based Naming">
+  Organize classes by grade level:
+  
+  - **Elementary:** "Grade 1", "Grade 2", "Kindergarten A"
+  - **Middle School:** "6th Grade Science", "7th Grade A"
+  - **High School:** "10th Grade English", "Senior Math"
+  
+  Benefits:
+  - Clear grade identification
+  - Easy sorting and organization
+  - Parent-friendly terminology
+</Accordion>
+
+<Accordion title="Subject-Based Naming">
+  For specialized or subject-specific classes:
+  
+  - "Advanced Mathematics"
+  - "Beginning Spanish"
+  - "Physical Education Period 3"
+  - "Art Workshop"
+  
+  Useful for:
+  - Secondary schools with period rotations
+  - Specialized programs
+  - Elective courses
+</Accordion>
+
+<Accordion title="Section Identifiers">
+  Use letters or numbers to distinguish multiple sections:
+  
+  - "Grade 3A", "Grade 3B", "Grade 3C"
+  - "Year 5 Red", "Year 5 Blue", "Year 5 Green"
+  - "1st Grade Room 101", "1st Grade Room 102"
+  
+  Helps manage:
+  - Multiple classes at the same level
+  - Parallel sections
+  - Different classrooms
+</Accordion>
+
+## Capacity Management
+
+<CardGroup cols={2}>
+  <Card title="Setting Capacity" icon="users">
+    **Factors to consider:**
+    
+    - Physical classroom size
+    - Student-teacher ratio policies
+    - Available resources (desks, materials)
+    - Educational standards and regulations
+    - Safety and fire code requirements
+    
+    Minimum capacity: 1 student
+  </Card>
+
+  <Card title="Monitoring Enrollment" icon="chart-line">
+    **Track class utilization:**
+    
+    - Compare enrolled students vs. capacity
+    - Identify under-enrolled classes
+    - Flag over-capacity situations
+    - Plan for additional sections
+    - Balance class sizes across sections
+  </Card>
+</CardGroup>
+
+<Warning>
+  The system validates that capacity must be at least 1. Setting the capacity too low may prevent student enrollment when the limit is reached.
+</Warning>
+
+## Teacher Assignments
+
+<Accordion title="One Teacher Per Class">
+  Each class is assigned to one primary teacher via the `Teacher_ID` field:
+  
+  - One teacher can be assigned to multiple classes
+  - Each class has exactly one assigned teacher
+  - The Teacher ID must match an existing teacher record
+  
+  **Example:**
+  - Teacher ID 5 might teach "Grade 2A" and "Grade 2B"
+  - Both classes reference Teacher_ID = 5
+</Accordion>
+
+<Accordion title="Finding Teacher IDs">
+  To find the correct Teacher ID for class assignment:
+  
+  1. Go to **View** > **Teacher**
+  2. Locate the desired teacher in the table
+  3. Note their Teacher ID (first column)
+  4. Use this ID when creating or updating the class
+  
+  You can also reference the teacher's name, field, and contact information to confirm the correct assignment.
+</Accordion>
+
+<Accordion title="Reassigning Teachers">
+  When a teacher changes:
+  
+  **Scenario 1: Teacher leaves mid-year**
+  1. Update class record with new Teacher_ID
+  2. Students remain in the same class
+  3. Only the teacher assignment changes
+  
+  **Scenario 2: Load balancing**
+  1. Review teacher assignments
+  2. Redistribute classes for balanced workload
+  3. Update Teacher_ID for affected classes
+</Accordion>
+
+## Relationships
+
+<Steps>
+  <Step title="Student Assignment">
+    Students are linked to classes through the `Class_ID` field in student records. Multiple students can belong to the same class.
+    
+    See [Student Management](/features/student-management) for details.
+  </Step>
+
+  <Step title="Teacher Assignment">
+    Classes reference teachers via `Teacher_ID`. One teacher can manage multiple classes.
+    
+    See [Teacher Management](/features/teacher-management) for teacher details.
+  </Step>
+</Steps>
+
+## Database Structure
+
+```sql
+Table: Class
+Fields:
+  - Class_ID (Primary Key, Auto-increment)
+  - classYear (VARCHAR, Required)
+  - capacity (INTEGER, Required, Minimum: 1)
+  - Teacher_ID (Foreign Key to Teacher table, Required)
+
+Relationships:
+  - One-to-Many with Student1 table (one class has many students)
+  - Many-to-One with Teacher table (many classes can have the same teacher)
+```
+
+## Planning Class Organization
+
+<CardGroup cols={3}>
+  <Card title="Small School" icon="building">
+    **100-300 students**
+    
+    - One class per grade level
+    - Mixed-age classes if needed
+    - Multi-grade teaching
+    - Capacity: 15-25 students
+  </Card>
+
+  <Card title="Medium School" icon="school">
+    **300-800 students**
+    
+    - Multiple sections per grade
+    - Specialized subject classes
+    - Grade-level teams
+    - Capacity: 20-30 students
+  </Card>
+
+  <Card title="Large School" icon="city">
+    **800+ students**
+    
+    - Many parallel sections
+    - Department-based organization
+    - Period rotations
+    - Capacity: 25-35 students
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Accordion title="Capacity Planning">
+  - Set realistic capacity limits based on room size
+  - Leave 10-15% buffer for unexpected enrollments
+  - Monitor enrollment trends to adjust capacity
+  - Create additional sections before reaching maximum
+  - Consider different capacities for different grade levels
+</Accordion>
+
+<Accordion title="Class Organization">
+  - Use consistent naming conventions
+  - Group similar classes together (e.g., all Grade 1 classes)
+  - Document any special class characteristics
+  - Plan class structure before the school year begins
+  - Review and reorganize classes annually
+</Accordion>
+
+<Accordion title="Teacher Load">
+  - Track how many classes each teacher manages
+  - Balance workload across teachers
+  - Consider class sizes when assigning teachers
+  - Plan for substitute coverage
+  - Document teacher preferences and specializations
+</Accordion>
+
+<Info>
+  **Integration Note:** Class records must be created before assigning students. Always set up classes and assign teachers at the beginning of the school year or term.
+</Info>

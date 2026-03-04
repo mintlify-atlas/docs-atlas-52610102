@@ -1,0 +1,192 @@
+---
+title: Introduction
+description: Overview of the Primary School Management System - a comprehensive solution for managing students, teachers, parents, classes, and staff
+---
+
+## What is the Primary School Management System?
+
+The Primary School Management System is a comprehensive web-based application designed to streamline administrative tasks for Rishton Academy Primary School. Built with PHP and MySQL, this system provides a centralized platform for managing all aspects of school operations.
+
+## Who Is This System For?
+
+This system is designed for:
+
+- **School Administrators** - Manage student records, teacher assignments, and class schedules
+- **Office Staff** - Handle parent communications, contact inquiries, and salary processing
+- **IT Personnel** - Maintain and deploy the system infrastructure
+
+<Note>
+The system requires administrator authentication to access all management features. Only authorized personnel should have access to the admin login credentials.
+</Note>
+
+## Core Features
+
+The system provides complete CRUD (Create, Read, Update, Delete) operations for the following entities:
+
+<CardGroup cols={2}>
+  <Card title="Student Management" icon="user-graduate">
+    Track student information including name, birthday, parent association, and class assignment
+  </Card>
+  
+  <Card title="Teacher Management" icon="chalkboard-teacher">
+    Manage teacher profiles with contact details, specialization fields, and bonus information
+  </Card>
+  
+  <Card title="Parent Management" icon="users">
+    Maintain parent records with contact information and address details
+  </Card>
+  
+  <Card title="Class Management" icon="school">
+    Organize classes by year, capacity, and assigned teacher
+  </Card>
+  
+  <Card title="Salary Management" icon="money-bill">
+    Process teacher salaries based on working hours and salary amounts
+  </Card>
+  
+  <Card title="Gym Member Management" icon="dumbbell">
+    Track gym membership for school facilities
+  </Card>
+</CardGroup>
+
+## System Architecture
+
+The system follows a simple yet effective architecture:
+
+```
+┌─────────────────┐
+│  HTML Forms     │  ← User Interface Layer
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  PHP Backend    │  ← Business Logic Layer
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│ MySQL Database  │  ← Data Persistence Layer
+└─────────────────┘
+```
+
+### Technology Stack
+
+- **Frontend**: HTML5, CSS3, JavaScript, Font Awesome Icons
+- **Backend**: PHP (procedural style)
+- **Database**: MySQL with MySQLi extension
+- **UI Framework**: Custom CSS with dropdown navigation
+
+## Database Connection
+
+The system uses MySQLi to connect to the database. Here's how the connection is established:
+
+```php admin_login.php
+$connection = mysqli_connect(
+    "sdb-57.hosting.stackcp.net",
+    "student84-353031351c89",
+    "ua92-studentAc",
+    "student84-353031351c89"
+);
+
+// Checking connection
+if($connection === false){
+    die("Connection failed: ");
+}
+```
+
+<Warning>
+In production environments, database credentials should be stored in environment variables or configuration files outside the web root, not hardcoded in PHP files.
+</Warning>
+
+## Navigation Structure
+
+The system features a dropdown-based navigation menu organized into four main operations:
+
+1. **View** - Display all records for each entity
+2. **Add** - Create new records
+3. **Delete** - Remove existing records
+4. **Update** - Modify existing records
+
+## Security Features
+
+### Admin Authentication
+
+The system includes an admin login panel that validates credentials against the `admin_login` table:
+
+```php admin_login.php
+if(isset($_POST['submit'])){
+    $query="SELECT * FROM `admin_login` 
+            WHERE admin_user=$_POST['admin_user'] 
+            AND admin_pass=$_POST['admin_pass']";
+    $result=mysqli_query($connection,$query);
+    if(mysqli_num_rows($result)==1){
+        echo"correct."; 
+    }else{
+        echo"incorrect.";
+    }
+}
+```
+
+<Warning>
+This authentication implementation is basic and should be enhanced with:
+- Password hashing (bcrypt or Argon2)
+- Prepared statements to prevent SQL injection
+- Session management
+- HTTPS for secure data transmission
+</Warning>
+
+## Data Entities
+
+### Student Entity
+
+Students are stored in the `Student1` table with the following fields:
+
+- `Sid` - Student ID (Primary Key)
+- `Sname` - First Name
+- `Ssurname` - Last Name  
+- `Sbirthday` - Date of Birth
+- `Parent_ID` - Foreign Key to Parent table
+- `Class_ID` - Foreign Key to Class table
+
+### Teacher Entity
+
+Teachers are stored in the `Teacher` table with:
+
+- `bonus_amount` - Bonus compensation
+- `teacher_field` - Subject specialization
+- `Tname` - First Name
+- `Tsurname` - Last Name
+- `Taddress` - Address
+- `Tmobile` - Mobile Number
+- `Temail` - Email Address
+
+### Class Entity
+
+Classes are stored in the `Class` table with:
+
+- `Class_ID` - Class ID (Primary Key)
+- `classYear` - Class/Year Name
+- `capacity` - Maximum Students
+- `Teacher_ID` - Assigned Teacher
+
+### Salary Entity
+
+Salary records track teacher compensation:
+
+- `Teacher_ID` - Foreign Key to Teacher
+- `salary_amount` - Salary Amount
+- `workingTimes` - Working Hours
+
+## User Interface
+
+The system features a consistent navigation bar across all pages with a dark theme (`#333` background) and hover effects for improved user experience.
+
+<Info>
+The interface uses Font Awesome 4.7.0 for icons and includes responsive design considerations with viewport meta tags.
+</Info>
+
+## Next Steps
+
+Ready to get started? Check out the [Quickstart Guide](/quickstart) to set up the system and begin managing your school data.
+
+## Support
+
+For assistance or inquiries, users can access the Contact Us page from the navigation menu to submit their questions and concerns.

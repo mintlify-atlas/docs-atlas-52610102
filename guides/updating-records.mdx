@@ -1,0 +1,391 @@
+---
+title: Updating Records
+description: Learn how to update existing records in the Primary School Management System including students, teachers, parents, classes, gym members, and salaries.
+---
+
+## Overview
+
+The Primary School Management System allows you to update existing records through dedicated update forms. Each update operation requires identifying the record by its ID and providing the new values for the fields you want to change.
+
+## Accessing Update Forms
+
+<Steps>
+  <Step title="Navigate to the Update menu">
+    From the navigation bar, click on the **Uptade** dropdown button (note the spelling in the source system).
+  </Step>
+  
+  <Step title="Select record type">
+    Choose the type of record you want to update:
+    - Student
+    - Parent
+    - Teacher
+    - Class
+    - Gym Member
+    - Salary
+  </Step>
+  
+  <Step title="Fill in the update form">
+    Enter the ID of the record to update along with the new values.
+  </Step>
+</Steps>
+
+<Warning>
+Update operations modify existing data in the database. Always verify the record ID before submitting to avoid updating the wrong record.
+</Warning>
+
+## Updating a Student
+
+To update an existing student record, navigate to `UptadeStudent.html`.
+
+### Student Update Form
+
+The student update form requires:
+
+```html
+<form method="post" action="UptadeStudent.php">
+    <label for="Sid">Student ID:</label>
+    <input required type="text" name="Sid" />
+    
+    <label for="Sname">Student Name:</label>
+    <input required type="text" name="Sname">
+    
+    <label for="Ssurname">Student Surname:</label>
+    <input required type="text" name="Ssurname">
+    
+    <label for="Sbirthday">Student's New Birthday</label>
+    <input type="date" max="2023-04-06" name="Sbirthday" />
+    
+    <input type="submit" name="submit">
+</form>
+```
+
+<Steps>
+  <Step title="Identify the student">
+    Enter the **Student ID** (`Sid`) of the record you want to update. This is the unique identifier for the student.
+  </Step>
+  
+  <Step title="Provide new values">
+    Fill in the fields you want to update:
+    - **Student Name** (`Sname`): New first name
+    - **Student Surname** (`Ssurname`): New last name
+    - **Student Birthday** (`Sbirthday`): New date of birth (optional)
+  </Step>
+  
+  <Step title="Submit the update">
+    Click Submit to apply the changes to the database.
+  </Step>
+</Steps>
+
+### Backend Update Logic
+
+The `UptadeStudent.php` script processes the update:
+
+```php
+if (isset($_POST['submit'])) {
+    $Sid = $_POST['Sid'];
+    $Sname = $_POST['Sname'];
+    $Ssurname = $_POST['Ssurname'];
+    $Sbirthday = $_POST['Sbirthday'];
+
+    $uptade = "UPDATE Student1 SET Sname = '$Sname', 
+               Ssurname = '$Ssurname', 
+               Sbirthday='$Sbirthday' 
+               WHERE Sid= '$Sid'";
+    
+    if (mysqli_query($link, $uptade)) {
+        echo "Record has been uptaded.";
+    } else {
+        echo "Error uptading record.";
+    }
+}
+```
+
+<Info>
+The UPDATE statement uses a WHERE clause to identify the specific record by its ID, then sets new values for the specified columns.
+</Info>
+
+### Example Update
+
+To update student with ID 5:
+
+1. Enter Student ID: `5`
+2. Enter Student Name: `Jennifer`
+3. Enter Student Surname: `Anderson`
+4. Enter Student Birthday: `2015-08-20`
+5. Click Submit
+
+The system executes:
+```sql
+UPDATE Student1 SET Sname = 'Jennifer', Ssurname = 'Anderson', Sbirthday='2015-08-20' WHERE Sid = '5'
+```
+
+## Updating a Teacher
+
+Teacher records can be updated through `UptadeTeacher.html`.
+
+<Note>
+To update a teacher, you need to know the Teacher ID and provide the new values for the fields you want to change.
+</Note>
+
+### Teacher Update Process
+
+<Steps>
+  <Step title="Locate teacher ID">
+    Find the teacher's ID from the View Teachers page (`ViewTeacher.php`).
+  </Step>
+  
+  <Step title="Access update form">
+    Navigate to Update > Teacher from the dropdown menu.
+  </Step>
+  
+  <Step title="Enter new information">
+    Provide the Teacher ID and the updated values for fields like:
+    - Teacher name
+    - Subject field
+    - Address
+    - Mobile number
+    - Email address
+    - Bonus amount
+  </Step>
+  
+  <Step title="Submit changes">
+    The update is applied to the Teacher table.
+  </Step>
+</Steps>
+
+## Updating a Parent
+
+Parent records can be modified via `UptadeParent.html`.
+
+### Parent Update Fields
+
+Typical fields available for update:
+- Parent First Name (`Pname`)
+- Parent Last Name (`Psurname`)
+- Parent Address (`Paddress`)
+- Parent Email (`Pemail`)
+
+<Warning>
+Changing a parent's ID may break relationships with student records. Only update the ID if you understand the implications.
+</Warning>
+
+## Updating a Class
+
+Class information can be updated through `UptadeClass.html`.
+
+### Class Update Fields
+
+<Steps>
+  <Step title="Specify Class ID">
+    Enter the unique Class ID to identify which class to update.
+  </Step>
+  
+  <Step title="Update class details">
+    Modify fields such as:
+    - Class name/year
+    - Class capacity
+    - Assigned Teacher ID
+  </Step>
+  
+  <Step title="Save changes">
+    Submit the form to update the class record.
+  </Step>
+</Steps>
+
+<Info>
+If you change the Teacher ID for a class, ensure the new teacher ID exists in the Teacher table.
+</Info>
+
+## Updating Gym Member Records
+
+Gym member information can be updated via `UptadeGym.html`.
+
+## Updating Salary Records
+
+Salary information can be modified through `UptadeSalary.html`.
+
+### Salary Update Process
+
+<Steps>
+  <Step title="Identify salary record">
+    Salary records are typically identified by Teacher ID or a unique salary record ID.
+  </Step>
+  
+  <Step title="Update salary information">
+    Modify:
+    - Salary amount
+    - Working type (Part-Time/Full-Time)
+  </Step>
+  
+  <Step title="Submit the update">
+    The new salary information is saved to the database.
+  </Step>
+</Steps>
+
+<Warning>
+Salary updates should be handled carefully and only by authorized personnel. Always verify the Teacher ID before updating salary information.
+</Warning>
+
+## How Updates Work
+
+All update operations follow the same pattern:
+
+<Steps>
+  <Step title="Database connection">
+    PHP establishes connection to MySQL:
+    
+    ```php
+    $link = mysqli_connect(
+        "sdb-57.hosting.stackcp.net", 
+        "student84-353031351c89", 
+        "ua92-studentAc", 
+        "student84-353031351c89"
+    );
+    ```
+  </Step>
+  
+  <Step title="Form submission check">
+    The script checks if the form was submitted:
+    
+    ```php
+    if (isset($_POST['submit'])) {
+        // Process update
+    }
+    ```
+  </Step>
+  
+  <Step title="Retrieve POST data">
+    Form values are retrieved from the `$_POST` array:
+    
+    ```php
+    $id = $_POST['id_field'];
+    $field1 = $_POST['field1'];
+    $field2 = $_POST['field2'];
+    ```
+  </Step>
+  
+  <Step title="Build UPDATE query">
+    An SQL UPDATE statement is constructed:
+    
+    ```php
+    $update = "UPDATE TableName SET field1='$field1', field2='$field2' WHERE id='$id'";
+    ```
+  </Step>
+  
+  <Step title="Execute query">
+    The query is executed and results are checked:
+    
+    ```php
+    if (mysqli_query($link, $update)) {
+        echo "Record has been uptaded.";
+    } else {
+        echo "Error uptading record.";
+    }
+    ```
+  </Step>
+</Steps>
+
+## Success and Error Messages
+
+After submitting an update form:
+
+- **Success**: "Record has been uptaded."
+- **Error**: "Error uptading record."
+
+<Note>
+The spelling "uptaded" appears in the source code and will be displayed as-is in the system messages.
+</Note>
+
+## Best Practices for Updates
+
+<Steps>
+  <Step title="Verify the record ID">
+    Before updating, use the View pages to confirm the correct record ID. Updating with the wrong ID will modify the wrong record.
+  </Step>
+  
+  <Step title="Check foreign key relationships">
+    If updating ID fields that are referenced by other tables (like Parent_ID or Teacher_ID), ensure the new ID exists in the parent table.
+  </Step>
+  
+  <Step title="Validate data formats">
+    Ensure dates are in the correct format (YYYY-MM-DD), emails are valid, and phone numbers match expected patterns.
+  </Step>
+  
+  <Step title="Test with non-critical data first">
+    If you're new to the system, practice updates on test records before modifying production data.
+  </Step>
+</Steps>
+
+## Common Update Scenarios
+
+### Correcting Student Information
+
+If a student's name was misspelled during entry:
+
+1. Go to View > Student to find the student's ID
+2. Navigate to Update > Student
+3. Enter the Student ID
+4. Enter the correct spelling of the name
+5. Submit the update
+
+### Changing Teacher Contact Details
+
+When a teacher's phone number or email changes:
+
+1. Note the Teacher ID from View > Teacher
+2. Access Update > Teacher
+3. Provide the Teacher ID
+4. Enter the new mobile number and/or email
+5. Save the changes
+
+### Adjusting Class Capacity
+
+If a classroom changes and can accommodate more students:
+
+1. Find the Class ID from View > Class
+2. Open Update > Class
+3. Enter the Class ID
+4. Increase the capacity value
+5. Submit the form
+
+## Troubleshooting Updates
+
+If an update fails:
+
+<Steps>
+  <Step title="Verify the ID exists">
+    Check that the record ID you're trying to update actually exists in the database. Use the View pages to confirm.
+  </Step>
+  
+  <Step title="Check required fields">
+    Ensure all required fields are filled in. The browser will typically prevent submission if required HTML5 fields are empty.
+  </Step>
+  
+  <Step title="Validate foreign keys">
+    If updating references (Parent_ID, Class_ID, Teacher_ID), verify those IDs exist in their respective tables.
+  </Step>
+  
+  <Step title="Review data types">
+    Make sure you're entering the correct data type (numbers for IDs, dates in YYYY-MM-DD format, etc.).
+  </Step>
+</Steps>
+
+<Info>
+Unlike delete operations, updates are generally safer because they don't remove data. However, you should still maintain backups before performing batch updates.
+</Info>
+
+## Database Transaction
+
+The UPDATE SQL statement syntax used in the system:
+
+```sql
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+```
+
+The WHERE clause is crucial—it specifies which record(s) to update. Without it, all records in the table would be updated.
+
+<Warning>
+Always include a WHERE clause in UPDATE statements to avoid accidentally modifying all records in the table.
+</Warning>

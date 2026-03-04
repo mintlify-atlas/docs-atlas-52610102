@@ -1,0 +1,318 @@
+---
+title: Viewing Records
+description: Learn how to view and browse all records in the Primary School Management System including students, teachers, parents, classes, contacts, gym members, and salaries.
+---
+
+## Overview
+
+The Primary School Management System provides dedicated view pages for browsing all records in the database. Each view page displays data in a tabular format, retrieved directly from the MySQL database using PHP.
+
+## Accessing View Pages
+
+<Steps>
+  <Step title="Open the View menu">
+    Click on the **View** dropdown button in the navigation bar at the top of any page.
+  </Step>
+  
+  <Step title="Select record type">
+    Choose which type of records you want to view:
+    - Student
+    - Parent
+    - Teacher
+    - Class
+    - Contact
+    - Gym Member
+    - Salary
+  </Step>
+  
+  <Step title="Browse the data">
+    The selected view page displays all records in a table format.
+  </Step>
+</Steps>
+
+<Info>
+All view pages are PHP files that execute database queries when loaded and dynamically generate HTML tables with the results.
+</Info>
+
+## Viewing Students
+
+The student view page (`ViewStudent.php`) displays all student records from the `Student1` table.
+
+### Student Table Columns
+
+The student table displays the following columns:
+
+| Column | Description |
+|--------|-------------|
+| Student ID | Auto-generated unique identifier (`Sid`) |
+| Student First Name | Student's first name (`Sname`) |
+| Student Last Name | Student's last name (`Ssurname`) |
+| Student Birthday | Date of birth (`Sbirthday`) |
+| Student's Parent ID | Associated parent record (`Parent_ID`) |
+| Student's Class ID | Associated class record (`Class_ID`) |
+
+### Implementation
+
+The student view page uses this PHP code to fetch and display data:
+
+```php
+<?php
+$link = mysqli_connect(
+    "sdb-57.hosting.stackcp.net", 
+    "student84-353031351c89", 
+    "ua92-studentAc", 
+    "student84-353031351c89"
+);
+
+if ($link === false) {
+    die("Connection failed: ");
+}
+?>
+
+<h3>See all Students</h3>
+<table>
+    <tr>
+        <th width="150px">student ID<br><hr></th>
+        <th width="250px">Student First Name<br><hr></th>
+        <th width="250px">Student Last Name<br><hr></th>
+        <th width="120px">Student Birthday<br><hr></th>
+        <th width="100px">Student's Parent ID<br><hr></th>
+        <th width="100px">Student's Class ID<br><hr></th>
+    </tr>
+    
+    <?php
+    $sql = mysqli_query($link, "SELECT Sid,Sname,Ssurname,Sbirthday,Parent_ID,Class_ID FROM Student1");
+    while ($row = $sql->fetch_assoc()) {
+        echo "
+        <tr>
+            <th>{$row['Sid']}</th>
+            <th>{$row['Sname']}</th>
+            <th>{$row['Ssurname']}</th>
+            <th>{$row['Sbirthday']}</th>
+            <th>{$row['Parent_ID']}</th>
+            <th>{$row['Class_ID']}</th>
+        </tr>";
+    }
+    ?>
+</table>
+```
+
+<Note>
+The `fetch_assoc()` function retrieves each result row as an associative array, where field names are case-sensitive and match the database column names.
+</Note>
+
+### Example Student View
+
+When you navigate to `ViewStudent.php`, you'll see a table like this:
+
+| student ID | Student First Name | Student Last Name | Student Birthday | Student's Parent ID | Student's Class ID |
+|------------|-------------------|-------------------|------------------|--------------------|-----------------|
+| 1 | John | Smith | 2015-03-15 | 5 | 2 |
+| 2 | Sarah | Johnson | 2014-07-22 | 6 | 2 |
+| 3 | Michael | Brown | 2016-01-10 | 7 | 1 |
+
+## Viewing Teachers
+
+The teacher view page (`ViewTeacher.php`) shows all teacher records with detailed information.
+
+### Teacher Table Columns
+
+| Column | Description |
+|--------|-------------|
+| Teacher ID | Unique identifier (`Teacher_ID`) |
+| Teacher bonus amount | Monetary bonus (`bonus_amount`) |
+| Teacher Field Name | Subject/specialization (`teacher_field`) |
+| Teacher First Name | First name (`Tname`) |
+| Teacher Last Name | Last name (`Tsurname`) |
+| Teacher Address | Residential address (`Taddress`) |
+| Teacher Mobile | Phone number (`Tmobile`) |
+| Teacher Email | Email address (`Temail`) |
+
+### SQL Query
+
+The teacher view executes this query:
+
+```php
+$sql = mysqli_query($link, 
+    "SELECT Teacher_ID,bonus_amount,teacher_field,Tname,Tsurname,Taddress,Tmobile,Temail FROM Teacher"
+);
+
+while ($row = $sql->fetch_assoc()) {
+    echo "
+    <tr>
+        <th>{$row['Teacher_ID']}</th>
+        <th>{$row['bonus_amount']}</th>
+        <th>{$row['teacher_field']}</th>
+        <th>{$row['Tname']}</th>
+        <th>{$row['Tsurname']}</th>
+        <th>{$row['Taddress']}</th>
+        <th>{$row['Tmobile']}</th>
+        <th>{$row['Temail']}</th>
+    </tr>";
+}
+```
+
+<Info>
+Teacher records include comprehensive contact information, making it easy to reach staff members when needed.
+</Info>
+
+### Example Teacher View
+
+| Teacher ID | Bonus Amount | Field | First Name | Last Name | Address | Mobile | Email |
+|------------|--------------|-------|------------|-----------|---------|--------|-------|
+| 1 | 500.00 | Mathematics | Jane | Doe | 123 Main St | 555-0101 | jane.doe@school.com |
+| 2 | 750.00 | Science | Robert | Wilson | 456 Oak Ave | 555-0102 | r.wilson@school.com |
+
+## Viewing Parents
+
+The parent view page (`ViewParent.php`) displays all parent/guardian records in the system.
+
+### Parent Information
+
+Parent records typically include:
+- Parent ID
+- Parent First Name (`Pname`)
+- Parent Last Name (`Psurname`)
+- Parent Address (`Paddress`)
+- Parent Email (`Pemail`)
+
+<Note>
+Parent records are linked to student records via the `Parent_ID` foreign key in the Student table.
+</Note>
+
+## Viewing Classes
+
+The class view page (`ViewClass.php`) shows all class configurations.
+
+### Class Information
+
+Class records display:
+- Class ID
+- Class Name/Year (`classYear`)
+- Class Capacity (`capacity`)
+- Assigned Teacher ID (`Teacher_ID`)
+
+<Info>
+You can use this view to see which teachers are assigned to which classes and monitor class capacity.
+</Info>
+
+## Viewing Contacts
+
+The contacts view page (`ViewContact.php`) displays all contact form submissions or contact information.
+
+## Viewing Gym Members
+
+The gym member view page (`ViewGymMember.php`) shows students or staff enrolled in gym programs.
+
+## Viewing Salaries
+
+The salary view page (`ViewSalary.php`) displays salary information for teachers.
+
+### Salary Information
+
+Salary records typically include:
+- Teacher ID
+- Salary Amount
+- Working Type (Part-Time or Full-Time)
+
+<Warning>
+Salary information is sensitive data. Ensure only authorized personnel have access to the salary view pages.
+</Warning>
+
+## How View Pages Work
+
+<Steps>
+  <Step title="Database connection established">
+    When you access a view page, PHP first establishes a connection to the MySQL database:
+    
+    ```php
+    $link = mysqli_connect(
+        "sdb-57.hosting.stackcp.net", 
+        "student84-353031351c89", 
+        "ua92-studentAc", 
+        "student84-353031351c89"
+    );
+    ```
+  </Step>
+  
+  <Step title="SQL query executed">
+    The page executes a SELECT query to fetch all records from the relevant table:
+    
+    ```php
+    $sql = mysqli_query($link, "SELECT * FROM TableName");
+    ```
+  </Step>
+  
+  <Step title="Results retrieved as associative array">
+    Each row is fetched using `fetch_assoc()`, which returns an associative array:
+    
+    ```php
+    while ($row = $sql->fetch_assoc()) {
+        // Access fields using $row['fieldname']
+    }
+    ```
+  </Step>
+  
+  <Step title="HTML table dynamically generated">
+    The PHP code generates HTML table rows for each database record:
+    
+    ```php
+    echo "<tr>
+        <th>{$row['field1']}</th>
+        <th>{$row['field2']}</th>
+    </tr>";
+    ```
+  </Step>
+</Steps>
+
+## Table Formatting
+
+All view tables use HTML with CSS styling:
+
+```html
+<table>
+    <tr>
+        <th width="150px">Column Header<br><hr></th>
+        <th width="250px">Another Header<br><hr></th>
+    </tr>
+    <!-- Data rows inserted here -->
+</table>
+```
+
+<Note>
+Column widths are specified in pixels to ensure consistent layout. Each header includes a horizontal rule (`<hr>`) for visual separation.
+</Note>
+
+## Navigation Between Views
+
+All view pages include the same navigation bar, allowing you to quickly switch between different record types without returning to the home page.
+
+<Info>
+The navigation bar is consistent across all pages, making it easy to navigate between Add, View, Delete, and Update operations for any record type.
+</Info>
+
+## Troubleshooting
+
+If a view page doesn't display data:
+
+<Steps>
+  <Step title="Check database connection">
+    Verify the MySQL connection is established successfully. If connection fails, you'll see "Connection failed:" message.
+  </Step>
+  
+  <Step title="Verify table has data">
+    The table might be empty if no records have been added yet. Use the Add menu to create sample records.
+  </Step>
+  
+  <Step title="Check table and column names">
+    Ensure the SQL query references the correct table and column names (case-sensitive).
+  </Step>
+  
+  <Step title="Review PHP errors">
+    Enable error reporting to see any PHP errors that might prevent data from displaying.
+  </Step>
+</Steps>
+
+<Warning>
+View pages display all records without pagination. Large datasets may cause slow page loads or browser performance issues.
+</Warning>

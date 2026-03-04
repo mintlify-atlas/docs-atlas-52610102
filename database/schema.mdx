@@ -1,0 +1,461 @@
+---
+title: 'Database Schema'
+description: 'Complete database schema reference for the Primary School Management System'
+icon: 'database'
+---
+
+## Overview
+
+The Primary School Management System uses a MySQL database with eight core tables that manage students, parents, teachers, classes, gym memberships, salaries, contact forms, and administrative access.
+
+<Note>
+All tables use auto-incrementing primary keys for their ID fields unless otherwise specified.
+</Note>
+
+---
+
+## Tables
+
+### Student1
+
+Stores student information and links students to their parents and classes.
+
+<ResponseField name="Sid" type="INT" required>
+  Auto-incrementing primary key for student identification
+</ResponseField>
+
+<ResponseField name="Sname" type="VARCHAR">
+  Student's first name
+</ResponseField>
+
+<ResponseField name="Ssurname" type="VARCHAR">
+  Student's last name
+</ResponseField>
+
+<ResponseField name="Sbirthday" type="DATE">
+  Student's date of birth
+</ResponseField>
+
+<ResponseField name="Parent_ID" type="INT">
+  Foreign key reference to the Parent table
+</ResponseField>
+
+<ResponseField name="Class_ID" type="INT">
+  Foreign key reference to the Class table
+</ResponseField>
+
+#### Relationships
+
+- **Parent**: Many-to-one relationship via `Parent_ID`
+- **Class**: Many-to-one relationship via `Class_ID`
+- **Gym**: One-to-one relationship (students can have gym memberships)
+
+#### Example Query
+
+```sql
+INSERT INTO Student1 (Sname, Ssurname, Sbirthday, Parent_ID, Class_ID) 
+VALUES ('John', 'Smith', '2015-03-15', 1, 2);
+```
+
+```sql
+SELECT Sid, Sname, Ssurname, Sbirthday, Parent_ID, Class_ID 
+FROM Student1;
+```
+
+---
+
+### Parent
+
+Stores parent and guardian contact information.
+
+<ResponseField name="Parent_ID" type="INT" required>
+  Auto-incrementing primary key for parent identification
+</ResponseField>
+
+<ResponseField name="Pname" type="VARCHAR">
+  Parent's first name
+</ResponseField>
+
+<ResponseField name="Psurname" type="VARCHAR">
+  Parent's last name
+</ResponseField>
+
+<ResponseField name="Paddress" type="VARCHAR">
+  Parent's residential address
+</ResponseField>
+
+<ResponseField name="Pemail" type="VARCHAR">
+  Parent's email address for communication
+</ResponseField>
+
+#### Relationships
+
+- **Student1**: One-to-many relationship (one parent can have multiple children)
+
+#### Example Query
+
+```sql
+INSERT INTO Parent (Pname, Psurname, Paddress, Pemail) 
+VALUES ('Michael', 'Smith', '123 Main Street, Manchester', 'michael.smith@email.com');
+```
+
+```sql
+SELECT Parent_ID, Pname, Psurname, Paddress, Pemail 
+FROM Parent;
+```
+
+---
+
+### Teacher
+
+Stores teacher information including contact details and compensation.
+
+<ResponseField name="Teacher_ID" type="INT" required>
+  Auto-incrementing primary key for teacher identification
+</ResponseField>
+
+<ResponseField name="bonus_amount" type="DECIMAL">
+  Bonus compensation amount for the teacher
+</ResponseField>
+
+<ResponseField name="teacher_field" type="VARCHAR">
+  Teacher's subject specialization or field of expertise
+</ResponseField>
+
+<ResponseField name="Tname" type="VARCHAR">
+  Teacher's first name
+</ResponseField>
+
+<ResponseField name="Tsurname" type="VARCHAR">
+  Teacher's last name
+</ResponseField>
+
+<ResponseField name="Taddress" type="VARCHAR">
+  Teacher's residential address
+</ResponseField>
+
+<ResponseField name="Tmobile" type="VARCHAR">
+  Teacher's mobile phone number
+</ResponseField>
+
+<ResponseField name="Temail" type="VARCHAR">
+  Teacher's email address
+</ResponseField>
+
+#### Relationships
+
+- **Class**: One-to-many relationship (one teacher can manage multiple classes)
+- **Salary**: One-to-many relationship (teachers can have multiple salary records)
+
+#### Example Query
+
+```sql
+INSERT INTO Teacher (bonus_amount, teacher_field, Tname, Tsurname, Taddress, Tmobile, Temail) 
+VALUES (500.00, 'Mathematics', 'Sarah', 'Johnson', '45 Oak Avenue, London', '07700900123', 'sarah.j@school.edu');
+```
+
+```sql
+SELECT Teacher_ID, bonus_amount, teacher_field, Tname, Tsurname, Taddress, Tmobile, Temail 
+FROM Teacher;
+```
+
+---
+
+### Class
+
+Stores class information including year group and assigned teacher.
+
+<ResponseField name="Class_ID" type="INT" required>
+  Auto-incrementing primary key for class identification
+</ResponseField>
+
+<ResponseField name="classYear" type="VARCHAR">
+  Year group or class name (e.g., 'Year 1', 'Year 2')
+</ResponseField>
+
+<ResponseField name="capacity" type="INT">
+  Maximum number of students allowed in the class
+</ResponseField>
+
+<ResponseField name="Teacher_ID" type="INT">
+  Foreign key reference to the Teacher table
+</ResponseField>
+
+#### Relationships
+
+- **Teacher**: Many-to-one relationship via `Teacher_ID`
+- **Student1**: One-to-many relationship (one class contains multiple students)
+
+#### Example Query
+
+```sql
+INSERT INTO Class (classYear, capacity, Teacher_ID) 
+VALUES ('Year 3', 30, 1);
+```
+
+```sql
+SELECT Class_ID, classYear, capacity, Teacher_ID 
+FROM Class;
+```
+
+---
+
+### Gym
+
+Stores gym membership information for students with various membership tiers.
+
+<ResponseField name="gymMemberID" type="INT" required>
+  Auto-incrementing primary key for gym membership identification
+</ResponseField>
+
+<ResponseField name="Sid" type="INT">
+  Foreign key reference to the Student1 table
+</ResponseField>
+
+<ResponseField name="gymFullName" type="VARCHAR">
+  Full name of the gym member
+</ResponseField>
+
+<ResponseField name="userRegDate" type="DATE">
+  Registration date for the gym membership
+</ResponseField>
+
+<ResponseField name="memberType" type="VARCHAR">
+  Membership tier: 'bronzeMember', 'silverMember', 'goldMember', or 'diamondMember'
+</ResponseField>
+
+<ResponseField name="medicalCondition" type="TEXT">
+  Any medical conditions or health notes for the member
+</ResponseField>
+
+#### Relationships
+
+- **Student1**: Many-to-one relationship via `Sid`
+
+#### Membership Duration
+
+<CardGroup cols={2}>
+  <Card title="Bronze" icon="medal">
+    30 days membership duration
+  </Card>
+  <Card title="Silver" icon="medal">
+    60 days membership duration
+  </Card>
+  <Card title="Gold" icon="medal">
+    90 days membership duration
+  </Card>
+  <Card title="Diamond" icon="gem">
+    180 days membership duration
+  </Card>
+</CardGroup>
+
+#### Example Query
+
+```sql
+INSERT INTO Gym (Sid, gymFullName, userRegDate, memberType, medicalCondition) 
+VALUES (1, 'John Smith', '2026-01-15', 'goldMember', 'Asthma - uses inhaler');
+```
+
+```sql
+SELECT Sid, gymMemberID, gymFullName, userRegDate, memberType, medicalCondition 
+FROM Gym;
+```
+
+---
+
+### Salary
+
+Stores salary records for teachers including payment amounts and working hours.
+
+<ResponseField name="Salary_ID" type="INT" required>
+  Auto-incrementing primary key for salary record identification
+</ResponseField>
+
+<ResponseField name="Teacher_ID" type="INT">
+  Foreign key reference to the Teacher table
+</ResponseField>
+
+<ResponseField name="salary_amount" type="DECIMAL">
+  Base salary amount for the teacher
+</ResponseField>
+
+<ResponseField name="workingTimes" type="VARCHAR">
+  Working hours or schedule information
+</ResponseField>
+
+#### Relationships
+
+- **Teacher**: Many-to-one relationship via `Teacher_ID`
+
+#### Example Query
+
+```sql
+INSERT INTO Salary (Teacher_ID, salary_amount, workingTimes) 
+VALUES (1, 35000.00, 'Full-time: 40 hours/week');
+```
+
+```sql
+SELECT Salary_ID, Teacher_ID, salary_amount, workingTimes 
+FROM Salary;
+```
+
+---
+
+### Contact
+
+Stores contact form submissions and feedback from users.
+
+<ResponseField name="contact_ID" type="INT" required>
+  Auto-incrementing primary key for contact record identification
+</ResponseField>
+
+<ResponseField name="contactName" type="VARCHAR">
+  Name of the person submitting the contact form
+</ResponseField>
+
+<ResponseField name="returnContact" type="VARCHAR">
+  Email address or phone number for follow-up communication
+</ResponseField>
+
+<ResponseField name="message" type="TEXT">
+  Message content from the contact form
+</ResponseField>
+
+#### Example Query
+
+```sql
+INSERT INTO Contact (contactName, returnContact, message) 
+VALUES ('Jane Doe', 'jane.doe@email.com', 'Question about enrollment dates for next term');
+```
+
+```sql
+SELECT contact_ID, contactName, returnContact, message 
+FROM Contact;
+```
+
+---
+
+### admin_login
+
+Stores administrative user credentials for system access.
+
+<ResponseField name="admin_user" type="VARCHAR" required>
+  Administrator username for login
+</ResponseField>
+
+<ResponseField name="admin_pass" type="VARCHAR" required>
+  Administrator password for authentication
+</ResponseField>
+
+<Warning>
+This table stores credentials. In production environments, passwords should be hashed using secure algorithms like bcrypt or Argon2, not stored in plain text.
+</Warning>
+
+#### Example Query
+
+```sql
+SELECT * FROM admin_login 
+WHERE admin_user = 'username' AND admin_pass = 'password';
+```
+
+---
+
+## Database Relationships Diagram
+
+```
+┌─────────────┐
+│   Parent    │
+└──────┬──────┘
+       │ 1:N
+       │
+┌──────▼──────┐      ┌─────────────┐
+│  Student1   ├──────┤    Class    │
+└──────┬──────┘ N:1  └──────┬──────┘
+       │ 1:1                │ N:1
+       │                    │
+┌──────▼──────┐      ┌──────▼──────┐
+│     Gym     │      │   Teacher   │
+└─────────────┘      └──────┬──────┘
+                            │ 1:N
+                            │
+                     ┌──────▼──────┐
+                     │   Salary    │
+                     └─────────────┘
+
+Standalone Tables:
+├── Contact (contact forms)
+└── admin_login (authentication)
+```
+
+---
+
+## Common Queries
+
+### Get All Students with Parent and Class Information
+
+```sql
+SELECT 
+    s.Sid,
+    s.Sname,
+    s.Ssurname,
+    s.Sbirthday,
+    p.Pname AS parent_firstname,
+    p.Psurname AS parent_lastname,
+    c.classYear
+FROM Student1 s
+LEFT JOIN Parent p ON s.Parent_ID = p.Parent_ID
+LEFT JOIN Class c ON s.Class_ID = c.Class_ID;
+```
+
+### Get Teacher with Their Classes and Salary
+
+```sql
+SELECT 
+    t.Teacher_ID,
+    t.Tname,
+    t.Tsurname,
+    t.teacher_field,
+    c.classYear,
+    s.salary_amount,
+    t.bonus_amount
+FROM Teacher t
+LEFT JOIN Class c ON t.Teacher_ID = c.Teacher_ID
+LEFT JOIN Salary s ON t.Teacher_ID = s.Teacher_ID;
+```
+
+### Get Students with Active Gym Memberships
+
+```sql
+SELECT 
+    s.Sname,
+    s.Ssurname,
+    g.gymFullName,
+    g.memberType,
+    g.userRegDate,
+    g.medicalCondition
+FROM Student1 s
+INNER JOIN Gym g ON s.Sid = g.Sid;
+```
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Prepared Statements" icon="shield-check">
+    Always use prepared statements or parameterized queries to prevent SQL injection attacks
+  </Card>
+  <Card title="Validate Foreign Keys" icon="link">
+    Ensure Parent_ID, Class_ID, and Teacher_ID exist before inserting student or class records
+  </Card>
+  <Card title="Data Validation" icon="check">
+    Validate email formats, date ranges, and required fields at the application level
+  </Card>
+  <Card title="Index Performance" icon="gauge">
+    Consider adding indexes on foreign key columns for better query performance
+  </Card>
+</CardGroup>
+
+<Warning>
+The current codebase uses string concatenation for SQL queries, which is vulnerable to SQL injection. Migrate to prepared statements using `mysqli_prepare()` and `mysqli_bind_param()`.
+</Warning>
