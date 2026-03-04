@@ -1,0 +1,102 @@
+{
+  "projectType": "saas",
+  "projectName": "Primary School Management System",
+  "projectDescription": "A web-based school management system for managing students, teachers, parents, classes, gym memberships, and staff salaries at Rishton Academy Primary School.",
+  "theme": "almond",
+  "primaryColor": "#4A90E2",
+  "lightColor": "#7BB3F0",
+  "darkColor": "#2E5C8A",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/student-management",
+              "features/teacher-management",
+              "features/parent-management",
+              "features/class-management",
+              "features/gym-management",
+              "features/salary-management"
+            ]
+          },
+          {
+            "group": "User Guide",
+            "pages": [
+              "guides/adding-records",
+              "guides/viewing-records",
+              "guides/updating-records",
+              "guides/deleting-records"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Technical Reference",
+        "groups": [
+          {
+            "group": "Database",
+            "pages": [
+              "database/schema",
+              "database/connection"
+            ]
+          },
+          {
+            "group": "Pages",
+            "pages": [
+              "reference/forms",
+              "reference/operations"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Student enrollment and management",
+    "Teacher and staff administration",
+    "Parent information tracking",
+    "Class organization and scheduling",
+    "Gym membership management",
+    "Salary and payroll tracking",
+    "Admin authentication",
+    "Contact form for inquiries"
+  ],
+  "publicApiSurface": [
+    "AddStudent.php - Create student records",
+    "ViewStudent.php - Display all students",
+    "UpdateStudent.php - Modify student information",
+    "DeleteStudent.php - Remove student records",
+    "AddTeacher.php - Create teacher records",
+    "ViewTeacher.php - Display all teachers",
+    "UpdateTeacher.php - Modify teacher information",
+    "DeleteTeacher.php - Remove teacher records",
+    "AddParent.php - Create parent records",
+    "ViewParent.php - Display all parents",
+    "UpdateParent.php - Modify parent information",
+    "DeleteParent.php - Remove parent records",
+    "AddClass.php - Create class records",
+    "ViewClass.php - Display all classes",
+    "UpdateClass.php - Modify class information",
+    "DeleteClass.php - Remove class records",
+    "AddGymMember.php - Create gym membership records",
+    "ViewGymMember.php - Display all gym members",
+    "UpdateGym.php - Modify gym membership information",
+    "DeleteGymMember.php - Remove gym membership records",
+    "AddSalary.php - Create salary records",
+    "ViewSalary.php - Display all salary information",
+    "UpdateSalary.php - Modify salary information",
+    "DeleteSalary.php - Remove salary records",
+    "admin_login.php - Admin authentication",
+    "Contact.php - Contact form submission"
+  ]
+}
